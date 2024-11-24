@@ -4,4 +4,16 @@
     
 <h1>Home Template</h1>
 
+<a href="{% url 'create-post' %}"><h3>Create post</h3></a>
+<hr>
+
+{% for post in posts %}
+    <span>@{{post.user.username}}</span>
+    <h2><a href="{% url 'post' post.id %}">{{post.title}}</a></h2>
+    <p>{{post.overview}}</p>
+    <a href="{% url 'update-post' post.id %}">Edit</a>
+    <a href="{% url 'delete-post' post.id %}">Delete</a>
+    <hr>
+{% endfor %}
+
 {% endblock content %}
