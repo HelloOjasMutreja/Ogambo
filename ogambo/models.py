@@ -9,6 +9,8 @@ class Post(models.Model):
     # category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=200)
     description = models.TextField(max_length=500, null=True, blank=True)
+    image = models.ImageField(upload_to='post_media/images/', null=True, blank=True) # For images/GIFs 
+    video = models.FileField(upload_to='post_media/videos/', null=True, blank=True) # For videos
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
