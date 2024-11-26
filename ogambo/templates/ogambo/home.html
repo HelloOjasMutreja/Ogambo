@@ -16,9 +16,11 @@
     {% if post.video %}
         <video src="{{post.video.url}}" loop autoplay></video>
     {% endif %}
-    <p>{{post.overview}}</p>
-    <a href="{% url 'update-post' post.id %}">Edit</a>
-    <a href="{% url 'delete-post' post.id %}">Delete</a>
+    <p>{{post.description}}</p>
+    {% if request.user == post.user %}
+        <a class="button" href="{% url 'update-post' post.id %}">Edit</a>
+        <a class="button" href="{% url 'delete-post' post.id %}">Delete</a>
+    {% endif %}
     <hr>
 {% endfor %}
 
