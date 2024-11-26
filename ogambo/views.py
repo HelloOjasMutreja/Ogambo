@@ -52,6 +52,16 @@ def registerUser(request):
     context = {'form' : form}
     return render(request, 'ogambo/forms/user_auth.html', context)
 
+def userProfile(request, username):
+    user = User.objects.get(username=username)
+    posts = user.post_set.all() 
+    context = { 
+        'user_profile': user, 
+        'posts': posts, 
+        'username': user.username
+        }
+    return render(request, 'ogambo/profile.html', context)
+
 @csrf_exempt  # Allowing CSRF for this example, consider safer methods in production
 @require_POST
 def vote(request, pk, vote_type):

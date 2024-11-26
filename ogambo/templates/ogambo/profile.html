@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+
+{% block title %}
+{{ username }}
+{% endblock title %}
+
+{% block content %}
+    <h1>{{ user_profile.username }}'s Profile</h1>
+    <p>Email: {{ user_profile.email }}</p>
+    <p>First Name: {{ user_profile.first_name }}</p>
+    <p>Last Name: {{ user_profile.last_name }}</p>
+
+    <h2>Posts</h2>
+    {% for post in posts %}
+    <span><a href="{% url 'user-profile' post.user.username %}">@{{post.user.username}}</a></span>
+    <h2><a href="{% url 'post' post.id %}">{{post.title}}</a></h2>
+    {% if post.image %}
+        <img src="{{post.image.url}}" alt="">
+    {% endif %}
+    {% if post.video %}
+        <video src="{{post.video.url}}" loop autoplay></video>
+    {% endif %}
+    <p>{{post.description}}</p>
+    <button data-vote-type="upvote" data-post-id="{{post.id}}" class="vote-btn">Upvote</button> {{ post.upvotes }}
+    <button data-vote-type="downvote" data-post-id="{{post.id}}" class="vote-btn">Downvote</button> {{ post.downvotes }}
+    <hr>
+{% endfor %}
+{% endblock content %}
