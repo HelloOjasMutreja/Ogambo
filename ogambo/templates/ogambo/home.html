@@ -2,7 +2,7 @@
 
 {% block content %}
     
-<h1>Home Template</h1>
+<h1>Hello, {{request.user.username}}</h1>
 
 <a href="{% url 'create-post' %}"><h3>Create post</h3></a>
 <hr>
@@ -17,11 +17,38 @@
         <video src="{{post.video.url}}" loop autoplay></video>
     {% endif %}
     <p>{{post.description}}</p>
-    {% if request.user == post.user %}
-        <a class="button" href="{% url 'update-post' post.id %}">Edit</a>
-        <a class="button" href="{% url 'delete-post' post.id %}">Delete</a>
-    {% endif %}
+    <button data-vote-type="upvote" data-post-id="{{post.id}}" class="vote-btn">Upvote</button> {{ post.upvotes }}
+    <button data-vote-type="downvote" data-post-id="{{post.id}}" class="vote-btn">Downvote</button> {{ post.downvotes }}
     <hr>
 {% endfor %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const voteButtons = document.querySelectorAll('.vote-btn');
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        voteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const postId = button.getAttribute('data-post-id');
+                const voteType = button.getAttribute('data-vote-type');
+
+                fetch(`/vote/${postId}/${voteType}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const upvoteButton = document.querySelector(`button[data-post-id="${postId}"][data-vote-type="upvote"]`);
+                    const downvoteButton = document.querySelector(`button[data-post-id="${postId}"][data-vote-type="downvote"]`);
+                    upvoteButton.innerText = `Upvote (${data.upvotes})`;
+                    downvoteButton.innerText = `Downvote (${data.downvotes})`;
+                });
+            });
+        });
+    });
+</script>
 
 {% endblock content %}

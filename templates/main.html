@@ -12,8 +12,11 @@
     {% include 'navbar.html' %}
     {% include 'messages.html' %}
     
-    {% block content %}
+    <form method="post" id="vote-form">
+        {% csrf_token %}
+    </form>
+    
+    {% block content %}{% endblock %}    
 
-    {% endblock %}    
 </body>
 </html>

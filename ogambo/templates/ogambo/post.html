@@ -2,7 +2,14 @@
 
 {% block content %}
 
-<h3>{{post.id}}</h3>
+<span>@{{post.user.username}}</span>
+<h2><a href="{% url 'post' post.id %}">{{post.title}}</a></h2>
+{% if post.image %}
+    <img src="{{post.image.url}}" alt="">
+{% endif %}
+{% if post.video %}
+    <video src="{{post.video.url}}" loop autoplay></video>
+{% endif %}
 
 <h1>{{post.title}}</h1>
 

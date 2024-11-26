@@ -20,3 +20,19 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def upvotes(self):
+        return self.votes.filter(vote_type=True).count()
+
+    def downvotes(self):
+        return self.votes.filter(vote_type=False).count()
+
+class Vote(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='votes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    ip_address = models.CharField(max_length=45, null=True, blank=True)
+    vote_type = models.BooleanField()  # True for upvote, False for downvote
+
+    def __str__(self):
+        voter = self.user.username if self.user else self.ip_address
+        return f"{voter} voted {'up' if self.vote_type else 'down'} on {self.post.title}"
