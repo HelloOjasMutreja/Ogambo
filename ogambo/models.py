@@ -4,14 +4,21 @@ import uuid
 
 # Create your models here.
 
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     # category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=200)
     description = models.TextField(max_length=500, null=True, blank=True)
-    image = models.ImageField(upload_to='post_media/images/', null=True, blank=True) # For images/GIFs 
-    video = models.FileField(upload_to='post_media/videos/', null=True, blank=True) # For videos
+    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
+    image = models.ImageField(upload_to='post_media/images/', null=True, blank=True)
+    video = models.FileField(upload_to='post_media/videos/', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

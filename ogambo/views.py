@@ -106,19 +106,21 @@ def createPost(request):
 
 @login_required(login_url='login')
 def updatePost(request, pk):
-    post = Post.objects.get(id=pk)
-    form = PostForm(instance=post)
-
+    post = get_object_or_404(Post, id=pk)
+    
     if request.user != post.user:
-        messages.error(request, "Your are not allowed to do this!")
+        messages.error(request, "You are not allowed to do this!")
         return redirect('home')
 
-    if request.method  == 'POST':
+    if request.method == 'POST':
         form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
             return redirect('home')
-        
+    else:
+        form = PostForm(instance=post)
+        form.fields['tags_input'].initial = '#' + ' #'.join(tag.name for tag in post.tags.all())
+
     context = {'form' : form}
     return render(request, 'ogambo/forms/post_form.html', context)
 

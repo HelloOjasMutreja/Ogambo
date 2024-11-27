@@ -17,8 +17,18 @@
         <video src="{{post.video.url}}" loop autoplay></video>
     {% endif %}
     <p>{{post.description}}</p>
+    <p>
+        {% for tag in post.tags.all %}
+            <span>#{{ tag.name }}</span>{% if not forloop.last %} {% endif %}
+        {% endfor %}
+    </p>
     <button data-vote-type="upvote" data-post-id="{{post.id}}" class="vote-btn">Upvote</button> {{ post.upvotes }}
     <button data-vote-type="downvote" data-post-id="{{post.id}}" class="vote-btn">Downvote</button> {{ post.downvotes }}
+    
+    {% if request.user == post.user %}
+        <a class="button" href="{% url 'update-post' post.id %}">Edit</a>
+        <a class="button" href="{% url 'delete-post' post.id %}">Delete</a>
+    {% endif %}
     <hr>
 {% endfor %}
 
