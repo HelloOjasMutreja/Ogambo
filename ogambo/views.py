@@ -4,11 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
-from .models import Post, Vote
+from .models import Post, Vote, Tag
 from .forms import PostForm
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 
 # Create your views here.
 
@@ -82,8 +83,15 @@ def vote(request, pk, vote_type):
     return JsonResponse({'upvotes': post.upvotes(), 'downvotes': post.downvotes()})
 
 def home(request):
-    posts = Post.objects.all()
-    context = {'posts' : posts}
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    posts = Post.objects.filter(
+        Q(tags__name__icontains=q) |
+        Q(title__icontains=q) |
+        Q(user__username__icontains=q)
+        )
+    tags = Tag.objects.all()
+
+    context = {'posts' : posts, 'tags' : tags}
     return render(request, 'ogambo/home.html', context)
 
 def post(request, pk):
