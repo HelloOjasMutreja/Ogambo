@@ -1,0 +1,115 @@
+<style>
+    .sidebar {
+        background-color: var(--ogambo-black);
+        height: 100vh;
+        position: fixed;
+        width: 25vw;
+        border-right: 2px solid #FFFBED
+    }
+
+    .upload-btn {
+        background-color: var(--ogambo-orange);
+        color: #1E1E1E;
+        padding: 0 20px;
+        width: calc(25vw - 32px);
+        height: 72px;
+        font-weight: bold;
+        border-radius: 24px;
+        margin: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-size: 32px;
+    }
+
+    .upload-btn i {
+        -webkit-text-stroke: 3px;
+    }
+
+    .upload-btn-text {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .nav {
+        border-top: 2px solid #FFFBED;
+        padding: 16px 24px;
+    }
+
+    .nav-item {
+        margin-bottom: 16px;
+    }
+
+    .nav-item :hover {
+        color: #FFFBED;
+    }
+
+    .nav-link {
+        color: #8A8A8A;
+        display: flex;
+        align-items: center;
+        text-transform: uppercase;
+        font-size: 32px;
+    }
+
+    .nav-link i {
+        -webkit-text-stroke: 1px;
+        margin: 0 16px 0 0;
+    }
+
+    @media (max-width: 1200px) {
+        .sidebar {
+            width: 33.33vw;
+        }
+
+        .upload-btn {
+            width: calc(33.33vw - 32px)
+        }
+
+        .nav-link {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="sidebar">
+    <a href="{% url 'create-post' %}" class="upload-btn">
+        <span><i class="bi bi-plus-lg"></i></span>
+        <span class="upload-btn-text">UPLOAD</span>
+    </a>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="bi bi-clock"></i>
+                <span>Latest</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="bi bi-graph-up"></i>
+                <span>Trending</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="bi bi-trophy"></i>
+                <span>Top</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="bi bi-shuffle"></i>
+                <span>Random</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="bi bi-bookmark"></i>
+                <span>Subscriptions</span>
+            </a>
+        </li>
+    </ul>
+</div>

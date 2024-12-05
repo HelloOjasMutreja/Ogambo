@@ -1,14 +1,34 @@
 <style>
     .content-area {
-        max-width: 750px;
         display: flex; 
         flex-direction: column;
         align-items: center;
     }
     
     .content-title {
-        font-size: 47px;
-        margin-bottom: 2rem;
+        font-size: 24px;
+        font-weight: 700;
+        margin: 24px 0 12px 0;
+        text-align: center;
+        color: #1E1E1E;
+        padding: 60px;
+        border: 2px solid #FFFBED;
+        border-radius: 12px;
+        background: linear-gradient(270deg, #FFB3BA, #FFDFBA, #FFFFBA, #BAFFC9, #BAE1FF);
+        background-size: 400% 400%;
+        animation: wavyBackground 8s ease infinite;
+    }
+
+    @keyframes wavyBackground {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
     }
 
     .meme-card {
@@ -162,6 +182,11 @@
             padding: 12px;
         }
 
+        .content-title {
+            font-size: 16px;
+            padding: 40px;
+        }
+
         .meme-header {
             height: 90px;
             padding: 12px;
@@ -196,6 +221,7 @@
 
 <main class="content-area">
     <div class="feed">
+        <p class="content-title">Good Evening {{request.user.username}}, <br>Want something to make you laugh?</p>
         {% for post in posts %}
             <div class="meme-card">
                 <div class="meme-header">

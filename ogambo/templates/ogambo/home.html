@@ -3,15 +3,36 @@
 {% block content %}
 
 <style>
+    .home {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+    }
+
+    @media (max-width: 1200px) {
+        .home {
+            grid-template-columns: 1fr 2fr;
+        }
+        .home-right-bar {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .home {
+            grid-template-columns: 1fr;
+        }
+        .home-left-bar, .home-right-bar {
+            display: none;
+        }
+    }
 </style>
 
 <div class="home">
     <div class="home-left-bar">
-        <a href="{% url 'create-post' %}"><h3>Create post</h3></a>
+        {% include 'ogambo/components/sidebar.html' %}
     </div>
     
     <div class="home-feed">
-        <h1 class="content-title">Good Evening, {{request.user.username}}</h1>
         {% include 'ogambo/components/feed.html' %}
     </div>
     
