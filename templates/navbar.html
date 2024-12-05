@@ -2,10 +2,14 @@
 
 <style>
     .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
         height: 82px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding: 0 16px;
         background-color: black;
         border-bottom: 3px solid #FFFBED;
     }
@@ -23,7 +27,7 @@
         align-items: center;
         justify-content: space-between;
         width: 100px;
-        height: 55px;
+        height: 56px;
         background-color: #202020;
         border: 3px solid #FFFBED;
         border-radius: 28px;
@@ -39,8 +43,8 @@
         border-radius: 50%;
     }
     .gradient-image-cover {
-        width: 58px;
-        height: 55px;
+        width: 56px;
+        height: 56px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -144,7 +148,7 @@
                 <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li><a class="dropdown-item" href="{% url 'home' %}">Profile</a></li>
                 {% if user.is_authenticated %}
-                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                <li><a class="dropdown-item" href="{% url 'user-profile' request.user.username %}">Logout</a></li>
                 {% else %}
                 <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
                 {% endif %}

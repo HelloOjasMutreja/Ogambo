@@ -1,24 +1,336 @@
-{% for post in posts %}
-    <span><a href="{% url 'user-profile' post.user.username %}">@{{post.user.username}}</a></span>
-    <h2><a href="{% url 'post' post.id %}">{{post.title}}</a></h2>
-    {% if post.image %}
-        <img src="{{post.image.url}}" alt="">
-    {% endif %}
-    {% if post.video %}
-        <video src="{{post.video.url}}" loop autoplay></video>
-    {% endif %}
-    <p>{{post.description}}</p>
-    <p>
-        {% for tag in post.tags.all %}
-            <span>#{{ tag.name }}</span>{% if not forloop.last %} {% endif %}
-        {% endfor %}
-    </p>
-    <button data-vote-type="upvote" data-post-id="{{post.id}}" class="vote-btn">Upvote</button> {{ post.upvotes }}
-    <button data-vote-type="downvote" data-post-id="{{post.id}}" class="vote-btn">Downvote</button> {{ post.downvotes }}
+<style>
+    .content-area {
+        max-width: 750px;
+        display: flex; 
+        flex-direction: column;
+        align-items: center;
+    }
     
-    {% if request.user == post.user %}
-        <a class="button" href="{% url 'update-post' post.id %}">Edit</a>
-        <a class="button" href="{% url 'delete-post' post.id %}">Delete</a>
-    {% endif %}
-    <hr>
-{% endfor %}
+    .content-title {
+        font-size: 47px;
+        margin-bottom: 2rem;
+    }
+
+    .meme-card {
+        background-color: #121212;
+        border: 2px solid #FFFBED;
+        border-radius: 12px;
+        overflow: hidden;
+        z-index: 10;
+        position: relative;
+        margin-bottom: 12px;
+    }
+
+    .meme-header {
+        height: 120px;
+        padding: 18px;
+        background-color: #121212;
+    }
+
+    .user-info {
+        display: flex;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        color: #FFFBED;
+    }
+
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        border: 3px solid #FFFBED;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #11D7FF, #FF4AC6);
+        margin: 0 12px 0 0;
+    }
+
+    .post-title {
+        height: 30px;
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        overflow: hidden;
+    }
+
+    .meme-image {
+        width: 100%;
+        background-color: var(--ogambo-black);
+    }
+
+    .meme-footer {
+        height: 81px;
+        padding: 12px;
+        align-items: center;
+        background-color: #121212;
+    }
+
+    .footer-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .meme-footer hr {
+        width: 100%;
+        margin: 6px 0;
+    }
+
+    .post-description {
+        background-color: #FFFBED;
+        border-radius: 12px;
+        color: #121212;
+        padding: 36px 18px 18px 18px;
+        margin: -36px 0px 12px 0px;
+        z-index: 5;
+        position: relative;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: start;
+        gap: 9px;
+    }
+
+    .action-btn {
+        background: none;
+        width: 57px;
+        height: 57px;
+        border: 2px solid #FFFBED;
+        border-radius: 50%;
+        color: #FFFBED;
+        font-size: 30px;
+    }
+
+    .action-btn i {
+        -webkit-text-stroke: 1px;
+    }
+
+    .bi-share {
+        margin-left: -5px
+    }
+
+    .action-btn.active[data-vote-type="upvote"] {
+        color: #4AFFA2;
+        border-color: #4AFFA2;
+    }
+
+    .action-btn.active[data-vote-type="downvote"] {
+        color: #FF4141;
+        border-color: #FF4141;
+    }
+
+    .hashtags {
+        height: 60px;
+    }
+
+    .hashtag-name {
+        display: inline-block;
+        background-color: var(--ogambo-gray);
+        color: var (--ogambo-green);
+        padding: 4px 8px;
+        border: 2px solid #FFFBED;
+        border-radius: 8px;
+        margin: 0.25rem;
+        font-size: 22px;
+    }
+
+    .ad-space {
+        background-color: var(--ogambo-blue);
+        border-radius: 12px;
+        padding: 60px 0;
+        align-items: center;
+        text-align: center;
+        color: #FFFBED;
+        margin: 12px 0;
+        border: 3px solid #FFFBED;
+        font-family: 'Space Mono', monospace;
+    }
+
+    @media (max-width: 1200px) {
+        .content-area {
+            margin-left: 0;
+            margin-right: 0;
+            max-width: 100%;
+            padding: 12px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .content-area {
+            margin-left: 0;
+            margin-right: 0;
+            max-width: 100%;
+            padding: 12px;
+        }
+
+        .meme-header {
+            height: 90px;
+            padding: 12px;
+        }
+
+        .meme-footer {
+            height: 56px;
+            padding: 12px;
+        }
+
+        .post-title span {
+            font-size: 20px;
+        }
+
+        .action-buttons {
+            height: 32px;
+            gap: 8px;
+        }
+
+        .action-btn {
+            border: 1px solid #FFFBED;
+            font-size: 16px;
+            width: 32px;
+            height: 32px;
+        }
+
+        .bi-share {
+            margin-left: -2px;
+        }
+    }
+</style>
+
+<main class="content-area">
+    <div class="feed">
+        {% for post in posts %}
+            <div class="meme-card">
+                <div class="meme-header">
+                    <a href="{% url 'user-profile' post.user.username %}" class="user-info">
+                        <div class="user-avatar"></div>
+                        {{post.user}} | {{post.updated|timesince}} ago
+                    </a>
+                    <div class="post-title mt-2">
+                        <span>{{post.title}}</span>
+                    </div>
+                </div>
+                <a href="{% url 'post' post.id %}">
+                    <div class="meme-image">
+                        {% if post.image %}
+                            <img src="{{post.image.url}}" class="meme-image" alt="">
+                        {% endif %}
+                        {% if post.video %}
+                            <video src="{{post.video.url}}" class="meme-image" loop autoplay></video>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="meme-footer">
+                    <div class="footer-buttons">
+                        <div class="action-buttons">
+                            <!-- <button class="action-btn toggle-btn" id="toggle-{{post.id}}" onclick="toggleDescription('{{post.id}}')">
+                                D
+                            </button> -->
+                            <button class="action-btn"  data-vote-type="downvote" data-post-id="{{post.id}}">
+                                <i class="bi bi-arrow-down"></i>
+                            </button>
+                            <button class="action-btn" data-vote-type="upvote" data-post-id="{{post.id}}">
+                                <i class="bi bi-arrow-up"></i>
+                            </button>
+                            <button class="action-btn">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                        <div class="save-button">
+                            <button class="action-btn">
+                                <i class="bi bi-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- <hr>
+                    <div class="">
+                        <p class="hashtags">
+                            {% for tag in post.tags.all %}
+                                <span class="hashtag-name">#{{ tag.name }}</span>
+                                {% if not forloop.last %}
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div> -->
+                </div>
+            </div>
+            <!-- <div id="description-{{post.id}}" class="post-description" style="display: none;">
+                <a href="{% url 'user-profile' post.user.username %}" class="user-info">
+                    <div class="user-avatar"></div>
+                    {{post.user}}
+                </a>
+                <strong>{{post.title}}  <i class="bi bi-arrow-down"></i> {{ post.downvotes }}<i class="bi bi-arrow-up"></i> {{ post.upvotes }}</strong>
+                <p class="post-description-text">{{post.description}}</p>
+                <p class="hashtags">
+                    {% for tag in post.tags.all %}
+                        <span class="hashtags-name">#{{ tag.name }}</span>
+                        {% if not forloop.last %}
+                        {% endif %}
+                    {% endfor %}
+                </p>
+                {% if request.user == post.user %}
+                    <a class="button" href="{% url 'update-post' post.id %}">Edit</a>
+                    <a class="button" href="{% url 'delete-post' post.id %}">Delete</a>
+                {% endif %}
+            </div> -->
+        {% endfor %}
+
+        <div class="ad-space">
+            Advertisement
+        </div>
+    </div>
+</main>
+
+<script>
+    function toggleDescription(postId) {
+        const descriptionElement = document.getElementById(`description-${postId}`);
+        if (descriptionElement) {
+            if (descriptionElement.style.display === "none" || !descriptionElement.style.display) {
+                descriptionElement.style.display = "block";
+            } else {
+                descriptionElement.style.display = "none";
+            }
+        } else {
+            console.error(`Description element with ID description-${postId} not found.`);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const voteButtons = document.querySelectorAll('.vote-btn, .action-btn');
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        voteButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent the click from affecting parent elements
+
+                const postId = button.getAttribute('data-post-id');
+                const voteType = button.getAttribute('data-vote-type');
+
+                fetch(`/vote/${postId}/${voteType}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Change button colors based on vote type
+                    const upvoteButton = document.querySelector(`button[data-post-id="${postId}"][data-vote-type="upvote"]`);
+                    const downvoteButton = document.querySelector(`button[data-post-id="${postId}"][data-vote-type="downvote"]`);
+
+                    // Reset button colors first
+                    upvoteButton.style.color = "";
+                    downvoteButton.style.color = "";
+
+                    if (voteType === "upvote") {
+                        upvoteButton.classList.add('active');
+                        downvoteButton.classList.remove('active');
+                    } else if (voteType === "downvote") {
+                        downvoteButton.classList.add('active');
+                        upvoteButton.classList.remove('active');
+                    }
+
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>

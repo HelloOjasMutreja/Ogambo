@@ -1,45 +1,25 @@
 {% extends 'main.html' %}
 
 {% block content %}
+
+<style>
+</style>
+
+<div class="home">
+    <div class="home-left-bar">
+        <a href="{% url 'create-post' %}"><h3>Create post</h3></a>
+    </div>
     
-<h1>Hello, {{request.user.username}}</h1>
-
-<form action="{% url 'home' %}" method="GET">
-    <input type="text" name="q" placeholder="Search..." />
-</form>
-
-<a href="{% url 'create-post' %}"><h3>Create post</h3></a>
-<hr>
-
-{% include 'ogambo/components/feed.html' %}
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const voteButtons = document.querySelectorAll('.vote-btn');
-        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        voteButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const postId = button.getAttribute('data-post-id');
-                const voteType = button.getAttribute('data-vote-type');
-
-                fetch(`/vote/${postId}/${voteType}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const upvoteButton = document.querySelector(`button[data-post-id="${postId}"][data-vote-type="upvote"]`);
-                    const downvoteButton = document.querySelector(`button[data-post-id="${postId}"][data-vote-type="downvote"]`);
-                    upvoteButton.innerText = `Upvote (${data.upvotes})`;
-                    downvoteButton.innerText = `Downvote (${data.downvotes})`;
-                });
-            });
-        });
-    });
-</script>
+    <div class="home-feed">
+        <h1 class="content-title">Good Evening, {{request.user.username}}</h1>
+        {% include 'ogambo/components/feed.html' %}
+    </div>
+    
+    <div class="home-right-bar">
+        <form action="{% url 'home' %}" method="GET">
+            <input type="text" name="q" placeholder="Search..." /.>
+        </form>
+    </div>
+</div>
 
 {% endblock content %}
