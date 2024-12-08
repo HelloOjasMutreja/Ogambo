@@ -6,24 +6,35 @@
         padding: 12px;
     }
     
-    .content-title {
+    .home-welcome {
         font-size: 24px;
         font-weight: 700;
         margin: 24px 0 12px 0;
+        padding: 2px;
         text-align: center;
-        color: #1E1E1E;
-        padding: 60px;
         border-radius: 12px;
         background: linear-gradient(
-            to right,
-            #FFE5B4,
-            #FFDAB9,
-            #FFAD60,
-            #FF8C42,
-            #FF7F00
+            105deg,
+            #FFD700, /* Bright Yellow */
+            #FF4500, /* Vivid Orange */
+            #FF69B4, /* Hot Pink */
+            #FF00FF, /* Magenta */
+            #800080, /* Deep Purple */
+            #FF00FF,
+            #FF69B4,
+            #FF4500,
+            #FFD700
         );
         background-size: 800% 800%;
         animation: wavy 6s ease-in-out infinite alternate;
+    }
+
+    .content-title {
+        padding: 60px;
+        margin: 0;
+        background: #1E1E1E;
+        border-radius: 10px;
+        color: #FFF;
     }
 
     @keyframes wavy {
@@ -142,6 +153,10 @@
         border-color: #FF4141;
     }
 
+    .action-btn.downvote {
+        display: none;
+    }
+
     .hashtags {
         height: 60px;
     }
@@ -180,10 +195,16 @@
 
     @media (max-width: 768px) {
         .content-area {
+            padding: 12px 12px 154px 12px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .content-area {
             margin-left: 0;
             margin-right: 0;
             max-width: 100%;
-            padding: 12px;
+            padding: 12px 12px 90px 12px;
         }
 
         .content-title {
@@ -225,7 +246,9 @@
 
 <main class="content-area">
     <div class="feed">
-        <p class="content-title">Good Evening {{request.user.username}}, <br>Want something to make you laugh?</p>
+        <div class="home-welcome">
+            <p class="content-title">Good Evening {{request.user.username}}, <br>Want something to make you laugh?</p>
+        </div>
         {% for post in posts %}
             <div class="meme-card">
                 <div class="meme-header">
@@ -253,10 +276,10 @@
                             <!-- <button class="action-btn toggle-btn" id="toggle-{{post.id}}" onclick="toggleDescription('{{post.id}}')">
                                 D
                             </button> -->
-                            <button class="action-btn"  data-vote-type="downvote" data-post-id="{{post.id}}">
+                            <button class="action-btn downvote"  data-vote-type="downvote" data-post-id="{{post.id}}">
                                 <i class="bi bi-arrow-down"></i>
                             </button>
-                            <button class="action-btn" data-vote-type="upvote" data-post-id="{{post.id}}">
+                            <button class="action-btn upvote" data-vote-type="upvote" data-post-id="{{post.id}}">
                                 <i class="bi bi-arrow-up"></i>
                             </button>
                             <button class="action-btn">
