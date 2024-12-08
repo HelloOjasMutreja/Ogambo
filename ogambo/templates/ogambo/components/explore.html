@@ -1,0 +1,72 @@
+<style>
+    .explore {
+        padding: 16px;
+        height: 100vh;
+        position: fixed;
+        width: 25vw;
+        border-left: 2px solid #FFFBED;
+        overflow-y: auto; /* Add scroll if content overflows */
+    }
+
+    .search-input {
+        background-color: var(--ogambo-gray);
+        width: calc(25vw - 32px);
+        border: 3px solid #fffbed;
+        font-size: 20px;
+        font-weight: 700;
+        color: #fffbeddc;
+        padding: 12px 12px;
+        border-radius: 12px;
+    }
+
+    .search-input:focus {
+        background-color: var(--ogambo-gray);
+        color: #FFFBED;
+        outline: none;
+        box-shadow: none;
+    }
+
+    .hashtags {
+        margin-top: 12px;
+        overflow-y: hidden;
+        height: 20vh;
+        padding-bottom: 150px;
+    }
+
+    .hashtag {
+        display: inline-block;
+        margin: 6px 3px 0 0;
+        background-color: var(--ogambo-black);
+        color: var(--ogambo-green);
+        text-decoration: none;
+        padding: 1px 6px 3px 6px;
+        border-radius: 12px;
+        border: 3px solid var(--ogambo-green);
+    }
+
+    .explore-ad-space{
+        height: 60vh;
+        bottom: 0;
+        border: 3px solid #FFFBED;
+        border-radius: 12px;
+        background: linear-gradient(#7411FF, #000);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white; /* Optional text color */
+    }
+</style>
+
+<aside class="explore">
+    <form action="{% url 'home' %}" method="GET">
+        <input class="search-input" type="text" name="q" placeholder="Search..." />
+    </form>
+    <div class="hashtags">
+        {% for tag in tags %}
+            <a href="{% url 'home' %}?q={{ tag.name }}" class="hashtag">{{ tag.name }}</a>
+        {% endfor %}
+    </div>
+    <div class="explore-ad-space">
+        Ad Space
+    </div>
+</aside>

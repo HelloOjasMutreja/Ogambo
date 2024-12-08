@@ -9,7 +9,7 @@ from .forms import PostForm
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
+from django.db.models import Q, Count
 
 # Create your views here.
 
@@ -89,7 +89,7 @@ def home(request):
         Q(title__icontains=q) |
         Q(user__username__icontains=q)
         )
-    tags = Tag.objects.all()
+    tags = Tag.objects.annotate(num_posts=Count('posts')).order_by('-num_posts')[:50]
 
     context = {'posts' : posts, 'tags' : tags}
     return render(request, 'ogambo/home.html', context)

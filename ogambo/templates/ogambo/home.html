@@ -37,9 +37,7 @@
     </div>
     
     <div class="home-right-bar">
-        <form action="{% url 'home' %}" method="GET">
-            <input type="text" name="q" placeholder="Search..." /.>
-        </form>
+        {% include 'ogambo/components/explore.html' %}
     </div>
 </div>
 

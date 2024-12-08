@@ -3,6 +3,7 @@
         display: flex; 
         flex-direction: column;
         align-items: center;
+        padding: 12px;
     }
     
     .content-title {
@@ -12,22 +13,25 @@
         text-align: center;
         color: #1E1E1E;
         padding: 60px;
-        border: 2px solid #FFFBED;
         border-radius: 12px;
-        background: linear-gradient(270deg, #FFB3BA, #FFDFBA, #FFFFBA, #BAFFC9, #BAE1FF);
-        background-size: 400% 400%;
-        animation: wavyBackground 8s ease infinite;
+        background: linear-gradient(
+            to right,
+            #FFE5B4,
+            #FFDAB9,
+            #FFAD60,
+            #FF8C42,
+            #FF7F00
+        );
+        background-size: 800% 800%;
+        animation: wavy 6s ease-in-out infinite alternate;
     }
 
-    @keyframes wavyBackground {
+    @keyframes wavy {
         0% {
             background-position: 0% 50%;
         }
-        50% {
-            background-position: 100% 50%;
-        }
         100% {
-            background-position: 0% 50%;
+            background-position: 100% 50%;
         }
     }
 
@@ -153,7 +157,7 @@
         font-size: 22px;
     }
 
-    .ad-space {
+    .feed-ad-space {
         background-color: var(--ogambo-blue);
         border-radius: 12px;
         padding: 60px 0;
@@ -298,7 +302,7 @@
             </div> -->
         {% endfor %}
 
-        <div class="ad-space">
+        <div class="feed-ad-space">
             Advertisement
         </div>
     </div>
