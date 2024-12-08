@@ -145,10 +145,10 @@
                 </span>
             </div>
             <ul class="profile-dropdown-menu dropdown-menu">
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><a class="dropdown-item" href="{% url 'home' %}">Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'home' %}">Settings</a></li>
                 {% if user.is_authenticated %}
-                <li><a class="dropdown-item" href="{% url 'user-profile' request.user.username %}">Logout</a></li>
+                <li><a class="dropdown-item" href="{% url 'user-profile' request.user.username %}">Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
                 <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
                 {% endif %}

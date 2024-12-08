@@ -252,10 +252,12 @@
         {% for post in posts %}
             <div class="meme-card">
                 <div class="meme-header">
-                    <a href="{% url 'user-profile' post.user.username %}" class="user-info">
-                        <div class="user-avatar"></div>
-                        {{post.user}} | {{post.updated|timesince}} ago
-                    </a>
+                    {% if post.user %}
+                        <a href="{% url 'user-profile' post.user.username %}" class="user-info">
+                            <div class="user-avatar"></div>
+                            {{post.user}} | {{post.updated|timesince}} ago
+                        </a>
+                    {% endif %}
                     <div class="post-title mt-2">
                         <span>{{post.title}}</span>
                     </div>
@@ -305,10 +307,12 @@
                 </div>
             </div>
             <!-- <div id="description-{{post.id}}" class="post-description" style="display: none;">
-                <a href="{% url 'user-profile' post.user.username %}" class="user-info">
-                    <div class="user-avatar"></div>
-                    {{post.user}}
-                </a>
+                {% if post.user %}
+                    <a href="{% url 'user-profile' post.user.username %}" class="user-info">
+                        <div class="user-avatar"></div>
+                        {{post.user}}
+                    </a>
+                {% endif %}
                 <strong>{{post.title}}  <i class="bi bi-arrow-down"></i> {{ post.downvotes }}<i class="bi bi-arrow-up"></i> {{ post.upvotes }}</strong>
                 <p class="post-description-text">{{post.description}}</p>
                 <p class="hashtags">

@@ -104,9 +104,21 @@ def createPost(request):
     form = PostForm()
 
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)  # Include request.FILES to handle file uploads
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            post = Post.objects.create(
+                user=request.user,
+                title=request.POST.get('title'),
+                description=request.POST.get('description')
+            )
+            tags_input = form.cleaned_data['tags_input']
+            tags = PostForm.parse_tags(tags_input)
+            post.tags.set(tags)
+            if 'image' in request.FILES:
+                post.image = request.FILES['image']
+            if 'video' in request.FILES:
+                post.video = request.FILES['video']
+            post.save()
             return redirect('home')
 
     context = {'form' : form}
