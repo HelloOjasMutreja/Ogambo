@@ -88,7 +88,7 @@ def home(request):
         Q(tags__name__icontains=q) |
         Q(title__icontains=q) |
         Q(user__username__icontains=q)
-        )
+        ).distinct
     tags = Tag.objects.annotate(num_posts=Count('posts')).order_by('-num_posts')[:50]
 
     context = {'posts' : posts, 'tags' : tags}
@@ -101,27 +101,31 @@ def post(request, pk):
 
 @login_required(login_url='login')
 def createPost(request):
-    form = PostForm()
-
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            post = Post.objects.create(
-                user=request.user,
-                title=request.POST.get('title'),
-                description=request.POST.get('description')
-            )
-            tags_input = form.cleaned_data['tags_input']
-            tags = PostForm.parse_tags(tags_input)
-            post.tags.set(tags)
+            post = form.save(commit=False)
+            post.user = request.user
+            
             if 'image' in request.FILES:
                 post.image = request.FILES['image']
             if 'video' in request.FILES:
                 post.video = request.FILES['video']
+            
             post.save()
-            return redirect('home')
 
-    context = {'form' : form}
+            tags_input = form.cleaned_data['tags_input']
+            tags = PostForm.parse_tags(tags_input)
+            post.tags.set(tags)
+
+            return redirect('home')
+        else:
+            print("Form is not valid")
+            print(form.errors)
+    else:
+        form = PostForm()
+
+    context = {'form': form}
     return render(request, 'ogambo/forms/post_form.html', context)
 
 @login_required(login_url='login')

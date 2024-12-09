@@ -1,10 +1,98 @@
 {% extends 'main.html' %}
 {% block content %}
-<div class="">
-    <form action="" method="post" enctype="multipart/form-data">
+
+<div class="upload-container">
+    <form action="{% url 'create-post' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{form.as_p}}
-        <input type="submit" value="Submit" />
+        
+        <!-- Media Upload Areas -->
+        <div id="upload-boxes">
+            <div class="upload-box">
+                <label for="image-input">Upload Memes, GIF, Videos ....</label>
+                <input type="file" id="image-input" name="image" accept="image/*" onchange="previewMedia(this, 'image')">
+            </div>
+            
+            <div class="upload-box">
+                <label for="video-input">Upload Memes, GIF, Videos ....</label>
+                <input type="file" id="video-input" name="video" accept="video/*" onchange="previewMedia(this, 'video')">
+            </div>
+        </div>
+        
+        <!-- Media Preview Area -->
+        <div id="media-preview" class="media-preview"></div>
+        
+        <!-- Title Field -->
+        <div class="caption-box">
+            {{ form.title.label_tag }} {{ form.title }}
+        </div>
+        
+        <!-- Description Field -->
+        <div class="caption-box">
+            {{ form.description.label_tag }} {{ form.description }}
+        </div>
+        
+        <!-- Tags Field -->
+        <div class="caption-box">
+            {{ form.tags_input.label_tag }} {{ form.tags_input }}
+        </div>
+        
+        <!-- Submit Button -->
+        <button type="submit" class="share-button">SHARE</button>
     </form>
+    
+    <script>
+        function previewMedia(input, type) {
+            const previewArea = document.getElementById('media-preview');
+            const uploadBoxes = document.getElementById('upload-boxes');
+            const file = input.files[0];
+
+            if (!file) {
+                console.log("No file selected.");
+                return;
+            }
+    
+            console.log("File selected: ", file);
+    
+            // Hide upload boxes
+            uploadBoxes.classList.add('hidden');
+    
+            // Clear previous preview
+            previewArea.innerHTML = '';
+    
+            // Create cancel button
+            const cancelButton = document.createElement('button');
+            cancelButton.type = 'button';
+            cancelButton.innerText = 'Cancel';
+            cancelButton.classList.add('cancel-button');
+            cancelButton.onclick = () => {
+                input.value = ''; // Clear input
+                previewArea.innerHTML = ''; // Clear preview
+                uploadBoxes.classList.remove('hidden'); // Show upload boxes again
+            };
+    
+            // Display preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                console.log("File loaded.");
+                if (type === 'image') {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('media-preview-item');
+                    previewArea.appendChild(img);
+                } else if (type === 'video') {
+                    const video = document.createElement('video');
+                    video.src = e.target.result;
+                    video.controls = true;
+                    video.classList.add('media-preview-item');
+                    previewArea.appendChild(video);
+                }
+                previewArea.appendChild(cancelButton);
+            };
+            reader.onerror = function(e) {
+                console.error("File could not be read: ", e);
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
 </div>
 {% endblock content %}

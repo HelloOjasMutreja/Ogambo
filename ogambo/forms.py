@@ -10,7 +10,7 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = '__all__'
-        exclude = ['user']
+        exclude = ['user', 'tags', 'image', 'video']
 
     def save(self, commit=True):
         instance = super().save(commit=False)
