@@ -154,7 +154,11 @@ def updatePost(request, pk):
         form = PostForm(instance=post)
         form.fields['tags_input'].initial = '#' + ' #'.join(tag.name for tag in post.tags.all())
 
-    context = {'form' : form}
+    context = {
+        'form': form,
+        'existing_image': post.image.url if post.image else None,
+        'existing_video': post.video.url if post.video else None,
+    }
     return render(request, 'ogambo/forms/post_form.html', context)
 
 @login_required(login_url='login')

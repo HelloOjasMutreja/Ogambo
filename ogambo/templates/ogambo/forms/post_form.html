@@ -314,13 +314,15 @@
             const charCounter = document.getElementById('char-counter');
             const maxLength = 500;
             const shareButton = document.getElementById('submit-button');
-            
+            const mediaPreview = document.getElementById('media-preview');
+            const uploadBoxes = document.querySelector('.upload-boxes');
+    
             // Update character counter
             function updateCharCounter() {
                 const remaining = maxLength - descriptionField.value.length;
                 charCounter.textContent = `${remaining} characters remaining`;
             }
-            
+    
             // Update share button state
             function updateShareButtonState() {
                 if (titleInput.value.trim() !== '') {
@@ -332,69 +334,112 @@
                 }
             }
     
+            // Function to preview media
+            function previewMedia(input, type) {
+                const file = input.files[0];
+                if (!file) return;
+    
+                // Hide upload boxes
+                uploadBoxes.classList.add('hidden');
+    
+                // Clear previous preview
+                mediaPreview.innerHTML = '';
+                mediaPreview.classList.remove('hidden');
+    
+                // Remove any existing cancel button
+                const existingCancelButton = mediaPreview.querySelector('.cancel-button');
+                if (existingCancelButton) {
+                    existingCancelButton.remove();
+                }
+    
+                // Create cancel button
+                const cancelButton = document.createElement('button');
+                cancelButton.type = 'button';
+                cancelButton.classList.add('cancel-button');
+                cancelButton.innerHTML = '<i class="bi bi-x-lg"></i>';
+                cancelButton.onclick = () => {
+                    input.value = ''; // Clear input
+                    mediaPreview.innerHTML = ''; // Clear preview
+                    mediaPreview.classList.add('hidden'); // Hide preview area
+                    uploadBoxes.classList.remove('hidden'); // Show upload boxes again
+                };
+    
+                // Display preview
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (type === 'image') {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('media-preview-item');
+                        mediaPreview.appendChild(img);
+                    } else if (type === 'video') {
+                        const video = document.createElement('video');
+                        video.src = e.target.result;
+                        video.controls = true;
+                        video.classList.add('media-preview-item');
+                        mediaPreview.appendChild(video);
+                    }
+                    mediaPreview.appendChild(cancelButton);
+                };
+                reader.readAsDataURL(file);
+            }
+    
+            // Function to load existing media when updating a post
+            function loadExistingMedia() {
+                const existingImage = '{% if form.instance.image %}{{ form.instance.image.url }}{% else %}{% endif %}';
+                const existingVideo = '{% if form.instance.video %}{{ form.instance.video.url }}{% else %}{% endif %}';
+    
+                if (existingImage || existingVideo) {
+                    uploadBoxes.classList.add('hidden');
+                    mediaPreview.classList.remove('hidden');
+    
+                    if (existingImage) {
+                        const img = document.createElement('img');
+                        img.src = existingImage;
+                        img.classList.add('media-preview-item');
+                        mediaPreview.appendChild(img);
+                    }
+    
+                    if (existingVideo) {
+                        const video = document.createElement('video');
+                        video.src = existingVideo;
+                        video.controls = true;
+                        video.classList.add('media-preview-item');
+                        mediaPreview.appendChild(video);
+                    }
+    
+                    // Add cancel button
+                    const cancelButton = document.createElement('button');
+                    cancelButton.type = 'button';
+                    cancelButton.classList.add('cancel-button');
+                    cancelButton.innerHTML = '<i class="bi bi-x-lg"></i>';
+                    cancelButton.onclick = () => {
+                        mediaPreview.innerHTML = ''; // Clear preview
+                        mediaPreview.classList.add('hidden'); // Hide preview area
+                        uploadBoxes.classList.remove('hidden'); // Show upload boxes again
+                    };
+    
+                    mediaPreview.appendChild(cancelButton);
+                }
+            }
+    
             // Initialize on page load
             updateCharCounter();
             updateShareButtonState();
-            
+            loadExistingMedia();
+    
             // Add event listeners
             descriptionField.addEventListener('input', updateCharCounter);
             titleInput.addEventListener('input', updateShareButtonState);
+    
+            // Attach previewMedia function to inputs
+            document.querySelector('#image-input').addEventListener('change', function () {
+                previewMedia(this, 'image');
+            });
+            document.querySelector('#video-input').addEventListener('change', function () {
+                previewMedia(this, 'video');
+            });
         });
-        
-        function previewMedia(input, type) {
-            const previewArea = document.getElementById('media-preview');
-            const uploadBoxes = input.closest('.upload-boxes'); // Target the closest parent
-
-            const file = input.files[0];
-            if (!file) return;
-
-            // Hide upload boxes
-            uploadBoxes.classList.add('hidden');
-
-            // Clear previous preview
-            previewArea.innerHTML = '';
-            previewArea.classList.remove('hidden'); // Show preview area
-
-            // Remove any existing cancel button
-            const existingCancelButton = previewArea.querySelector('.cancel-button');
-            if (existingCancelButton) {
-                existingCancelButton.remove();
-            }
-
-            // Create cancel button
-            const cancelButton = document.createElement('button');
-            cancelButton.type = 'button';
-            cancelButton.classList.add('cancel-button');
-
-            // Set the button's innerHTML explicitly to ensure only one "X" or icon is rendered
-            cancelButton.innerHTML = '<i class="bi bi-x-lg"></i>'; // Use Bootstrap icon
-
-            cancelButton.onclick = () => {
-                input.value = ''; // Clear input
-                previewArea.innerHTML = ''; // Clear preview
-                previewArea.classList.add('hidden'); // Hide preview area
-                uploadBoxes.classList.remove('hidden'); // Show upload boxes again
-            };
-
-            // Display preview
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                if (type === 'image') {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.classList.add('media-preview-item');
-                    previewArea.appendChild(img);
-                } else if (type === 'video') {
-                    const video = document.createElement('video');
-                    video.src = e.target.result;
-                    video.controls = true;
-                    video.classList.add('media-preview-item');
-                    previewArea.appendChild(video);
-                }
-                previewArea.appendChild(cancelButton);
-            };
-            reader.readAsDataURL(file);
-        }
-    </script>
+    </script>    
 </div>
 {% endblock content %}
