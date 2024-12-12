@@ -102,11 +102,17 @@ def post(request, pk):
 @login_required(login_url='login')
 def createPost(request):
     if request.method == 'POST':
+        print("Received POST request")
+        print("POST data:", request.POST)
+        print("FILES data:", request.FILES)
+
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
+            print("Form is valid")
             post = form.save(commit=False)
             post.user = request.user
             
+            # Handle uploaded files
             if 'image' in request.FILES:
                 post.image = request.FILES['image']
             if 'video' in request.FILES:
@@ -114,15 +120,18 @@ def createPost(request):
             
             post.save()
 
+            # Process tags
             tags_input = form.cleaned_data['tags_input']
             tags = PostForm.parse_tags(tags_input)
             post.tags.set(tags)
 
+            print("Post created successfully")
             return redirect('home')
         else:
             print("Form is not valid")
             print(form.errors)
     else:
+        print("GET request received")
         form = PostForm()
 
     context = {'form': form}

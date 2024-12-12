@@ -1,79 +1,384 @@
 {% extends 'main.html' %}
 {% block content %}
+<style>
+    .upload-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 90vh;
+        width: 100%;
+    }
+
+    .upload-page {
+        background-color: #121212;
+        border-radius: 12px;
+        color: #FFFBED;
+        margin: 20px;
+        width: 100%;
+        max-width: 1318px;
+    }
+
+    .upload-playground {
+        margin: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .media-playground, .text-playground {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 3px solid #FFFBED;
+        height: 616px;
+    }
+
+    .media-playground {
+        border-right: 1.5px solid #FFFBED;
+    }
+
+    .text-playground {
+        border-left: 1.5px solid #FFFBED;
+    }
+
+    .upload-boxes {
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+    }
+
+    .upload-box {
+        border: 3px solid var(--ogambo-orange);
+        background: #000;
+        border-radius: 12px;
+        width: 521px;
+        height: 254px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .upload-box label {
+        color: var(--ogambo-orange);
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .upload-box input {
+        display: none;
+    }
+
+    .caption-box {
+        margin-bottom: 20px;
+        width: 521px;
+    }
+    
+    .caption-box label {
+        margin-bottom: 6px;
+    }
+
+    .caption-box input, .caption-box textarea {
+        width: 100%;
+        padding: 10px;
+        border: 3px solid #FFFBED;
+        border-radius: 12px;
+        background-color: #000;
+        color: #FFFBED;
+        font-weight: 700;
+    }
+
+    .media-preview {
+        position: relative;
+        width: 521px;
+        height: 521px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: #000;
+        border: 3px solid var(--ogambo-orange);
+        border-radius: 12px;
+    }
+
+    .media-preview-item {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        margin: 24px;
+    }
+
+    .cancel-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--ogambo-orange);
+        border: 3px solid var(--ogambo-gray);
+        border-radius: 50%;
+        padding: 1px 6px;
+        color: #121212; /* Adjust color as needed */
+        font-size: 24px; /* Size of the button/icon */
+        cursor: pointer;
+        z-index: 10; /* Ensure it appears above the media preview */
+    }
+
+    .cancel-button i {
+        pointer-events: none; /* Prevent clicking on the icon instead of the button */
+        -webkit-text-stroke: 1px;
+    }
+
+    .upload-playground-footer {
+        display: flex;
+        justify-content: center;
+        padding: 12px 0px;
+    }
+
+    .submit-button {
+        background-color: var(--ogambo-orange);
+        color: #1E1E1E;
+        font-size: 32px;
+        font-weight: 700;
+        width: 480px;
+        height: 56px;
+        border-radius: 12px;
+        border: 0px;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    @media (max-width: 1025px) {
+        .upload-container {
+            padding: auto;
+        }
+
+        .upload-page{
+            padding: 100px 12px 100px 12px;
+        }
+
+        .upload-page {
+            margin-top: 0;
+            border-radius: 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .upload-playground {
+            display: flex;
+            flex-direction: column;
+            margin-top: 100px;
+        }
+
+        .media-playground, .text-playground {
+            width: 100%;
+            height: max-content;
+            border: none;
+            padding: 10px 0;
+        }
+
+        .upload-boxes {
+            width: 100%;
+        }
+
+        .upload-box {
+            width: 100%;
+            height: 150px;
+        }
+
+        .upload-box label {
+            font-size: 24px;
+        }
+
+        .media-preview {
+            width: 100%;
+            height: 312px;
+        }
+
+        .caption-box {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .submit-button {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .upload-page {
+            padding-bottom: 160px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .upload-container {
+            padding: auto;
+        }
+
+        .upload-page {
+            padding-bottom: 100px;
+        }
+
+        .upload-playground {
+            padding: auto;
+        }
+
+        .upload-box {
+            height: 120px;
+            width: 100%;
+        }
+
+        .upload-box label {
+            font-size: 18px;
+        }
+
+        .media-preview {
+            height: 250px;
+            width: 100%;
+        }
+
+        .submit-button {
+            font-size: 18px;
+            height: 40px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .media-playground {
+            margin-top: 120px;
+        }
+
+        .upload-box {
+            height: 100px;
+            width: 100%;
+        }
+
+        .media-preview {
+            height: 212px;
+            width: 100%;
+        }
+    }
+</style>
 
 <div class="upload-container">
-    <form action="{% url 'create-post' %}" method="POST" enctype="multipart/form-data">
+    <form class="upload-page" action="{% url 'create-post' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         
-        <!-- Media Upload Areas -->
-        <div id="upload-boxes">
-            <div class="upload-box">
-                <label for="image-input">Upload Memes, GIF, Videos ....</label>
-                <input type="file" id="image-input" name="image" accept="image/*" onchange="previewMedia(this, 'image')">
+        <div class="">
+            <div class="upload-playground">
+                <div class="media-playground">
+                    <div class="upload-boxes">
+                        <div class="upload-box">
+                            <label for="image-input">Upload Memes, Images...</label>
+                            <input type="file" id="image-input" name="image" accept="image/*" class="image-input" onchange="previewMedia(this, 'image')">
+                        </div>
+                        
+                        <div class="upload-box">
+                            <label for="video-input">Upload GIF, Videos ....</label>
+                            <input type="file" id="video-input" name="video" accept="video/*" class="video-input" onchange="previewMedia(this, 'video')">
+                        </div>                     
+                    </div>
+                    <div id="media-preview" class="media-preview hidden"></div>   
+                </div>
+                <div class="text-playground">
+                    <div class="caption-box">
+                        {{ form.title.label_tag }} {{ form.title }}
+                    </div>
+                    
+                    <div class="caption-box">
+                        {{ form.description.label_tag }} {{ form.description }}
+                        <small id="char-counter">500 characters remaining</small>
+                    </div>
+                    
+                    <div class="caption-box">
+                        {{ form.tags_input.label_tag }} {{ form.tags_input }}
+                    </div>
+                </div>
             </div>
             
-            <div class="upload-box">
-                <label for="video-input">Upload Memes, GIF, Videos ....</label>
-                <input type="file" id="video-input" name="video" accept="video/*" onchange="previewMedia(this, 'video')">
+            <div class="upload-playground-footer">
+                <button type="submit" class="submit-button" id="submit-button">SHARE</button>                
             </div>
+            
         </div>
-        
-        <!-- Media Preview Area -->
-        <div id="media-preview" class="media-preview"></div>
-        
-        <!-- Title Field -->
-        <div class="caption-box">
-            {{ form.title.label_tag }} {{ form.title }}
-        </div>
-        
-        <!-- Description Field -->
-        <div class="caption-box">
-            {{ form.description.label_tag }} {{ form.description }}
-        </div>
-        
-        <!-- Tags Field -->
-        <div class="caption-box">
-            {{ form.tags_input.label_tag }} {{ form.tags_input }}
-        </div>
-        
-        <!-- Submit Button -->
-        <button type="submit" class="share-button">SHARE</button>
     </form>
     
     <script>
-        function previewMedia(input, type) {
-            const previewArea = document.getElementById('media-preview');
-            const uploadBoxes = document.getElementById('upload-boxes');
-            const file = input.files[0];
-
-            if (!file) {
-                console.log("No file selected.");
-                return;
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleInput = document.getElementById('id_title');
+            const descriptionField = document.getElementById('id_description');
+            const charCounter = document.getElementById('char-counter');
+            const maxLength = 500;
+            const shareButton = document.getElementById('submit-button');
+            
+            // Update character counter
+            function updateCharCounter() {
+                const remaining = maxLength - descriptionField.value.length;
+                charCounter.textContent = `${remaining} characters remaining`;
+            }
+            
+            // Update share button state
+            function updateShareButtonState() {
+                if (titleInput.value.trim() !== '') {
+                    shareButton.disabled = false;
+                    shareButton.classList.remove('disabled');
+                } else {
+                    shareButton.disabled = true;
+                    shareButton.classList.add('disabled');
+                }
             }
     
-            console.log("File selected: ", file);
-    
+            // Initialize on page load
+            updateCharCounter();
+            updateShareButtonState();
+            
+            // Add event listeners
+            descriptionField.addEventListener('input', updateCharCounter);
+            titleInput.addEventListener('input', updateShareButtonState);
+        });
+        
+        function previewMedia(input, type) {
+            const previewArea = document.getElementById('media-preview');
+            const uploadBoxes = input.closest('.upload-boxes'); // Target the closest parent
+
+            const file = input.files[0];
+            if (!file) return;
+
             // Hide upload boxes
             uploadBoxes.classList.add('hidden');
-    
+
             // Clear previous preview
             previewArea.innerHTML = '';
-    
+            previewArea.classList.remove('hidden'); // Show preview area
+
+            // Remove any existing cancel button
+            const existingCancelButton = previewArea.querySelector('.cancel-button');
+            if (existingCancelButton) {
+                existingCancelButton.remove();
+            }
+
             // Create cancel button
             const cancelButton = document.createElement('button');
             cancelButton.type = 'button';
-            cancelButton.innerText = 'Cancel';
             cancelButton.classList.add('cancel-button');
+
+            // Set the button's innerHTML explicitly to ensure only one "X" or icon is rendered
+            cancelButton.innerHTML = '<i class="bi bi-x-lg"></i>'; // Use Bootstrap icon
+
             cancelButton.onclick = () => {
                 input.value = ''; // Clear input
                 previewArea.innerHTML = ''; // Clear preview
+                previewArea.classList.add('hidden'); // Hide preview area
                 uploadBoxes.classList.remove('hidden'); // Show upload boxes again
             };
-    
+
             // Display preview
             const reader = new FileReader();
-            reader.onload = function(e) {
-                console.log("File loaded.");
+            reader.onload = function (e) {
                 if (type === 'image') {
                     const img = document.createElement('img');
                     img.src = e.target.result;
@@ -87,9 +392,6 @@
                     previewArea.appendChild(video);
                 }
                 previewArea.appendChild(cancelButton);
-            };
-            reader.onerror = function(e) {
-                console.error("File could not be read: ", e);
             };
             reader.readAsDataURL(file);
         }
