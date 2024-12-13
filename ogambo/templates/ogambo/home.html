@@ -2,43 +2,6 @@
 
 {% block content %}
 
-<style>
-    .home {
-        display: grid;
-        grid-template-columns: 1fr 2fr 1fr;
-    }
-
-    @media (max-width: 1200px) {
-        .home {
-            grid-template-columns: 1fr 2fr;
-        }
-        .home-right-bar {
-            display: none;
-        }
-    }
-
-    @media (max-width: 769px) {
-        .home {
-            grid-template-columns: 1fr;
-        }
-        .home-left-bar, .home-right-bar {
-            display: none;
-        }
-    }
-</style>
-
-<div class="home">
-    <div class="home-left-bar">
-        {% include 'ogambo/components/sidebar.html' %}
-    </div>
-    
-    <div class="home-feed">
-        {% include 'ogambo/components/feed.html' %}
-    </div>
-    
-    <div class="home-right-bar">
-        {% include 'ogambo/components/explore.html' %}
-    </div>
-</div>
+{% include 'ogambo/components/feed.html' %}
 
 {% endblock content %}

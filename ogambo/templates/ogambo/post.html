@@ -1,22 +1,9 @@
 {% extends 'main.html' %}
 
-{% block title %}
-{{post.title}}
-{% endblock %}
-
 {% block content %}
 
-<span>@{{post.user.username}}</span>
-<h2><a href="{% url 'post' post.id %}">{{post.title}}</a></h2>
-{% if post.image %}
-    <img src="{{post.image.url}}" alt="">
-{% endif %}
-{% if post.video %}
-    <video src="{{post.video.url}}" loop autoplay></video>
-{% endif %}
+{% include 'ogambo/components/post_view.html' %}
 
-<h1>{{post.title}}</h1>
-
-<p>{{post.description}}</p>
+{% include 'ogambo/components/feed.html' %}
 
 {% endblock content %}

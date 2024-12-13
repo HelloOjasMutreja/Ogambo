@@ -5,6 +5,10 @@
         align-items: center;
         padding: 12px;
     }
+
+    .feed {
+        width: -webkit-fill-available;
+    }
     
     .home-welcome {
         font-size: 24px;
@@ -54,10 +58,11 @@
         z-index: 10;
         position: relative;
         margin-bottom: 12px;
+        width: -webkit-fill-available;
     }
 
     .meme-header {
-        height: 120px;
+        height: fit-content;
         padding: 18px;
         background-color: #121212;
     }
@@ -71,7 +76,7 @@
     }
 
     .user-avatar {
-        width: 36px;
+        min-width: 36px;
         height: 36px;
         border: 3px solid #FFFBED;
         border-radius: 50%;
@@ -87,11 +92,31 @@
         overflow: hidden;
     }
 
+    .post-title a {
+        color: #FFFBED;
+        text-decoration: none;
+    }
+
     .meme-image {
         max-height: 600px;
+        min-height: 100px;
+        color: #FFFBED;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
         width: 100%;
         background-color: var(--ogambo-black);
         object-fit: contain;
+    }
+
+    .meme-image a,
+    .meme-image p {
+        text-decoration: none;
+        color: #FFFBED;
+        padding: 12px;
+        font-size: 24px;
+        font-weight: 700;
     }
 
     .meme-footer {
@@ -119,6 +144,23 @@
         margin: -36px 0px 12px 0px;
         z-index: 5;
         position: relative;
+    }
+
+    .post-description-text {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .post-user-button {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 12px;
+    }
+
+    .post-user-button a {
+        color: #121212;
+        font-size: 24px;
+        text-decoration: none;
     }
 
     .action-buttons {
@@ -186,6 +228,14 @@
         font-family: 'Space Mono', monospace;
     }
 
+    .hover-red:hover {
+        color: #FF4141;
+    }
+
+    .hover-blue:hover {
+        color: #11D7FF;
+    }
+
     @media (max-width: 1200px) {
         .content-area {
             margin-left: 0;
@@ -196,8 +246,8 @@
     }
 
     @media (max-width: 768px) {
-        .content-area {
-            padding: 12px 12px 154px 12px;
+        .feed {
+            padding-bottom: 154px;
         }
     }
 
@@ -206,7 +256,10 @@
             margin-left: 0;
             margin-right: 0;
             max-width: 100%;
-            padding: 12px 12px 90px 12px;
+        }
+
+        .feed {
+            padding-bottom: 90px;
         }
 
         .content-title {
@@ -215,7 +268,6 @@
         }
 
         .meme-header {
-            height: 90px;
             padding: 12px;
         }
 
@@ -260,26 +312,28 @@
                             {{post.user}} | {{post.updated|timesince}} ago
                         </a>
                     {% endif %}
-                    <div class="post-title mt-2">
-                        <span>{{post.title}}</span>
-                    </div>
+                    {% if post.image or post.video %}
+                        <div class="post-title mt-2">    
+                            <a href="{% url 'post' post.id %}">
+                                <span>{{post.title}}</span>
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
-                <a href="{% url 'post' post.id %}">
-                    <div class="meme-image">
-                        {% if post.image %}
-                            <img src="{{post.image.url}}" class="meme-image" alt="">
-                        {% endif %}
-                        {% if post.video %}
-                            <video src="{{post.video.url}}" class="meme-image" loop autoplay></video>
-                        {% endif %}
-                    </div>
-                </a>
+                <div class="meme-image">
+                    {% if post.image %}
+                        <img src="{{post.image.url}}" class="meme-image" alt="">
+                    {% elif post.video %}
+                        <video src="{{post.video.url}}" class="meme-image" loop autoplay></video>
+                    {% else %}
+                    <a href="{% url 'post' post.id %}">
+                        {{post.title}}
+                    </a>
+                    {% endif %}
+                </div>
                 <div class="meme-footer">
                     <div class="footer-buttons">
                         <div class="action-buttons">
-                            <!-- <button class="action-btn toggle-btn" id="toggle-{{post.id}}" onclick="toggleDescription('{{post.id}}')">
-                                D
-                            </button> -->
                             <button class="action-btn downvote"  data-vote-type="downvote" data-post-id="{{post.id}}">
                                 <i class="bi bi-arrow-down"></i>
                             </button>
@@ -288,6 +342,9 @@
                             </button>
                             <button class="action-btn">
                                 <i class="bi bi-send"></i>
+                            </button>
+                            <button class="action-btn toggle-btn" id="toggle-{{post.id}}" onclick="toggleDescription('{{post.id}}')">
+                                <i class="bi bi-three-dots"></i>
                             </button>
                         </div>
                         <div class="save-button">
@@ -308,27 +365,31 @@
                     </div> -->
                 </div>
             </div>
-            <!-- <div id="description-{{post.id}}" class="post-description" style="display: none;">
-                {% if post.user %}
+            <div id="description-{{post.id}}" class="post-description" style="display: none;">
+                <!-- {% if post.user %}
                     <a href="{% url 'user-profile' post.user.username %}" class="user-info">
                         <div class="user-avatar"></div>
                         {{post.user}}
                     </a>
+                {% endif %} -->
+                <!-- <strong>{{post.title}}  <i class="bi bi-arrow-down"></i> {{ post.downvotes }}<i class="bi bi-arrow-up"></i> {{ post.upvotes }}</strong> -->
+                {% if post.description %}
+                    <p class="post-description-text">{{post.description}}</p>
                 {% endif %}
-                <strong>{{post.title}}  <i class="bi bi-arrow-down"></i> {{ post.downvotes }}<i class="bi bi-arrow-up"></i> {{ post.upvotes }}</strong>
-                <p class="post-description-text">{{post.description}}</p>
-                <p class="hashtags">
+                <!-- <p class="hashtags">
                     {% for tag in post.tags.all %}
                         <span class="hashtags-name">#{{ tag.name }}</span>
                         {% if not forloop.last %}
                         {% endif %}
                     {% endfor %}
-                </p>
+                </p> -->
                 {% if request.user == post.user %}
-                    <a class="button" href="{% url 'update-post' post.id %}">Edit</a>
-                    <a class="button" href="{% url 'delete-post' post.id %}">Delete</a>
+                <div class="post-user-button">
+                    <a class="" href="{% url 'delete-post' post.id %}"><i class="bi bi-trash-fill hover-red"></i></a>
+                    <a class="" href="{% url 'update-post' post.id %}"><i class="bi bi-pencil-fill hover-blue"></i></a>
+                </div>
                 {% endif %}
-            </div> -->
+            </div>
         {% endfor %}
 
         <div class="feed-ad-space">

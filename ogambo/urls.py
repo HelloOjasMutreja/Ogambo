@@ -12,6 +12,6 @@ urlpatterns = [
 
     path('post/<uuid:pk>/', views.post, name="post"),
     path('create-post/', views.createPost, name="create-post"),
-    path('update-post/<str:uuid>/', views.updatePost, name="update-post"),
-    path('delete-post/<str:pk>/', views.deletePost, name="delete-post"),
+    path('post/<str:pk>/edit', views.updatePost, name="update-post"),
+    path('post/<str:pk>/destroy', views.deletePost, name="delete-post"),
 ]

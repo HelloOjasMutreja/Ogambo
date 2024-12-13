@@ -95,8 +95,14 @@ def home(request):
     return render(request, 'ogambo/home.html', context)
 
 def post(request, pk):
-    post = Post.objects.get(id=pk)
-    context = {'post' : post}
+    post = Post.objects.get(id=pk)  # Get the specific post
+    tags = Tag.objects.annotate(num_posts=Count('posts')).order_by('-num_posts')[:50]
+
+    posts = Post.objects.filter(
+        tags__in=post.tags.all()
+    ).exclude(id=post.id).distinct()
+
+    context = {'post': post, 'tags': tags, 'posts': posts}
     return render(request, 'ogambo/post.html', context)
 
 @login_required(login_url='login')
