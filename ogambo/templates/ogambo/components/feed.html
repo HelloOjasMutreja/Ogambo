@@ -9,37 +9,6 @@
     .feed {
         width: -webkit-fill-available;
     }
-    
-    .home-welcome {
-        font-size: 24px;
-        font-weight: 700;
-        margin-bottom: 12px;
-        padding: 2px;
-        text-align: center;
-        border-radius: 12px;
-        background: linear-gradient(
-            105deg,
-            #FFD700, /* Bright Yellow */
-            #FF4500, /* Vivid Orange */
-            #FF69B4, /* Hot Pink */
-            #FF00FF, /* Magenta */
-            #800080, /* Deep Purple */
-            #FF00FF,
-            #FF69B4,
-            #FF4500,
-            #FFD700
-        );
-        background-size: 800% 800%;
-        animation: wavy 6s ease-in-out infinite alternate;
-    }
-
-    .content-title {
-        padding: 60px;
-        margin: 0;
-        background: #121212;
-        border-radius: 10px;
-        color: #FFF;
-    }
 
     @keyframes wavy {
         0% {
@@ -144,6 +113,7 @@
         margin: -36px 0px 12px 0px;
         z-index: 5;
         position: relative;
+        width: -webkit-fill-available;
     }
 
     .post-description-text {
@@ -173,8 +143,9 @@
         background: none;
         width: 57px;
         height: 57px;
-        border: 2px solid #FFFBED;
-        border-radius: 50%;
+        background-color: #000;
+        border: 2px solid #1E1E1E;
+        border-radius: 12px;
         color: #FFFBED;
         font-size: 30px;
     }
@@ -236,6 +207,27 @@
         color: #11D7FF;
     }
 
+    /* .meme-footer {
+        height: 60px;
+        padding: 12px;
+    }
+
+    .action-buttons {
+        height: 36px;
+        gap: 8px;
+    }
+
+    .action-btn {
+        border: 1px solid #FFFBED;
+        font-size: 16px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .bi-share {
+        margin-left: -3px;
+    } */
+
     @media (max-width: 1200px) {
         .content-area {
             margin-left: 0;
@@ -286,7 +278,7 @@
         }
 
         .action-btn {
-            border: 1px solid #FFFBED;
+            border-radius: 8px;
             font-size: 16px;
             width: 32px;
             height: 32px;
@@ -296,13 +288,22 @@
             margin-left: -2px;
         }
     }
+
+    @media (max-height: 780px) {
+        .meme-image {
+            max-height: 450px;
+        } 
+    }
+
+    @media (max-height: 680px) {
+        .meme-image {
+            max-height: 360px;
+        } 
+    }
 </style>
 
 <main class="content-area">
     <div class="feed">
-        <div class="home-welcome">
-            <p class="content-title">Good Evening {{request.user.username}}, <br>Want something to make you laugh?</p>
-        </div>
         {% for post in posts %}
             <div class="meme-card">
                 <div class="meme-header">

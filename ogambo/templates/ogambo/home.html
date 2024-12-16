@@ -2,6 +2,43 @@
 
 {% block content %}
 
+<style>
+    .home-welcome {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 12px;
+        margin-bottom: 0px;
+        padding: 2px;
+        text-align: center;
+        border-radius: 12px;
+        background: linear-gradient(
+            105deg,
+            #FFD700, /* Bright Yellow */
+            #FF4500, /* Vivid Orange */
+            #FF69B4, /* Hot Pink */
+            #FF00FF, /* Magenta */
+            #800080, /* Deep Purple */
+            #FF00FF,
+            #FF69B4,
+            #FF4500,
+            #FFD700
+        );
+        background-size: 800% 800%;
+        animation: wavy 6s ease-in-out infinite alternate;
+    }
+
+    .content-title {
+        padding: 60px;
+        margin: 0;
+        background: #121212;
+        border-radius: 10px;
+        color: #FFF;
+    }
+</style>
+
+<div class="home-welcome">
+    <p class="content-title">Good Evening {{request.user.username}}, <br>Want something to make you laugh?</p>
+</div>
 {% include 'ogambo/components/feed.html' %}
 
 {% endblock content %}
