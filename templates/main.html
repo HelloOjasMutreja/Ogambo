@@ -20,6 +20,8 @@
             --ogambo-light-gray: #8A8A8A;
             --ogambo-text: #FFFBED;
             --ogambo-blue: #00a2ff;
+            --ogambo-gold: #ffd700;
+            --ogambo-mint: #98ff98;
         }
 
         * {
@@ -38,6 +40,11 @@
         .home {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
+        }
+
+        .home-left-bar, 
+        .home-right-bar {
+            z-index: 2;
         }
     
         @media (max-width: 1200px) {

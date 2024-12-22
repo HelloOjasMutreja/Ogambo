@@ -55,8 +55,10 @@ def registerUser(request):
 
 def userProfile(request, username):
     user = User.objects.get(username=username)
-    posts = user.post_set.all() 
-    context = { 
+    posts = user.post_set.all()
+    tags = Tag.objects.annotate(num_posts=Count('posts')).order_by('-num_posts')[:50]
+    context = {
+        'tags': tags,
         'user_profile': user, 
         'posts': posts, 
         'username': user.username

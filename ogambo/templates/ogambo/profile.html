@@ -4,12 +4,264 @@
 {{ username }}
 {% endblock title %}
 
-{% block content %}
-    <h1>{{ user_profile.username }}'s Profile</h1>
-    <p>Email: {{ user_profile.email }}</p>
-    <p>First Name: {{ user_profile.first_name }}</p>
-    <p>Last Name: {{ user_profile.last_name }}</p>
+{% load static %}
 
-    <h2>Posts</h2>
+{% block content %}
+
+<style>
+    .profile-banner {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+        border-radius: 0 0 0px 0px;
+    }
+
+    .banner-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-info {
+        position: relative;
+        padding: 0 24px;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: flex-end;
+        margin-bottom: 24px;
+    }
+
+    .profile-avatar-container {
+        width: 186px;
+        height: 186px;
+        border: 5px solid #FFFBED;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: -93px;
+    }
+
+    .profile-avatar {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-name-container {
+        flex-grow: 1;
+        margin-left: 12px;
+    }
+
+    .user-details {
+        display: flex; 
+        justify-content: space-between;
+    }
+
+    .profile-name {
+        font-size: 48px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .verified-badge {
+        color: var(--ogambo-mint);
+        font-size: 36px;
+    }
+
+    .profile-control {
+        display: flex;
+        align-items: center;
+    }
+
+    .bookmark-icon,
+    .profile-edit-icon {
+        color: #FFFBED;
+        font-size: 36px;
+    }
+
+    .profile-report-icon {
+        font-size: 36px;
+        color: #ff4444;
+    }
+
+    .profile-bio {
+        color: #8A8A8A;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .stats-container {
+        background-color: #121212;
+        border: 3px solid #FFFBED;
+        border-radius: 12px;
+        margin: 16px 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: center;
+        margin: 12px;
+        color: #FFFBED;
+    }
+
+    .stat-value {
+        font-weight: bold;
+        font-size: 32px;
+        line-height: 1;
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .posts-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-top: 16px;
+        border: 3px solid #FFFBED;
+    }
+
+    .post-item {
+        aspect-ratio: 1;
+        overflow: hidden;
+        background-color: var(--ogambo-black);
+        border: 1px solid #FFFBED;
+    }
+
+    .post-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .stats-container .background-orange {
+        background-color: #FF5F2E;
+        margin: 0;
+        justify-content: center;
+        color: #121212;
+    }
+
+    @media (max-width:767px) {
+        .profile-banner {
+            height: 110px;
+        }
+        
+        .profile-info {
+            padding: 0px 12px;
+        }
+
+        .profile-header {        
+            margin-bottom: 12px;
+        }
+
+        .user-details {
+            margin-top: 4px;
+        }
+
+        .profile-avatar-container {
+            height: 103px;
+            width: 103px;
+            margin-top: -52px;
+        }
+
+        .profile-avatar {
+            height: 88px;
+            width: 88px;
+        }
+        
+        .profile-name {
+            font-size: 27px;
+            gap: 6px;
+        }
+
+        .verified-badge,
+        .bookmark-icon,
+        .profile-report-icon,
+        .profile-edit-icon {
+            font-size: 19px;
+        }
+
+        .profile-bio {
+            font-size: 14px;
+        }
+
+        .stat-item {
+            margin: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-banner">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="Profile Banner" class="banner-img">
+    </div>
+
+    <div class="profile-info">
+        <div class="profile-header">
+            <div class="profile-avatar-container">
+                <img src="{% static 'assets/pfp.png' %}" alt="Profile Avatar" class="profile-avatar">
+            </div>
+            <div class="profile-name-container">
+                <div class="user-details">
+                    <div class="profile-name">
+                        {{ user_profile.username }}
+                        <i class="bi bi-patch-check verified-badge"></i>
+                        <i class="bi bi-bookmark bookmark-icon"></i>
+                    </div>
+                    <div class="profile-control">
+                        {% if request.user %}
+                            {% if request.user == user_profile %}
+                                <i class="bi bi-pencil-fill profile-edit-icon"></i>
+                            {% else %}
+                                <i class="bi bi-exclamation-triangle-fill profile-report-icon"></i>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="profile-bio">
+                    When life's difficult, turn to Hulk
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-value">#1</div>
+                <div class="stat-label">Global Rank</div>
+            </div>
+            <div class="stat-item background-orange">
+                <div class="stat-value">150000</div>
+                <div class="stat-label">Total Likes</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">1273</div>
+                <div class="stat-label">Followers</div>
+            </div>
+        </div>
+    </div>
     {% include 'ogambo/components/feed.html' %}
+</div>
+
 {% endblock content %}
