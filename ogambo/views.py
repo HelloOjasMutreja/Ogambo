@@ -3,15 +3,17 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
 from .models import Post, Vote, Tag
-from .forms import PostForm
+from .forms import PostForm, CustomUserCreationForm
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, Count
 
 # Create your views here.
+
+def userAuth(request):
+    return render(request, 'ogambo/user_auth.html')
 
 def loginPage(request):
     page = 'login'
@@ -33,16 +35,17 @@ def loginPage(request):
         else:
             messages.error(request, "Username OR Password combination is incorrect")
     context = {'page' : page}
-    return render(request, 'ogambo/forms/user_auth.html', context)
+    return render(request, 'ogambo/forms/login_register.html', context)
+
 def logoutUser(request):
     logout(request)
     return redirect('home')
 
 def registerUser(request):
-    form = UserCreationForm()
+    form = CustomUserCreationForm()
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid:
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
             user.save()
@@ -51,7 +54,7 @@ def registerUser(request):
         else:
             messages.error(request, 'An error occured while registering')
     context = {'form' : form}
-    return render(request, 'ogambo/forms/user_auth.html', context)
+    return render(request, 'ogambo/forms/login_register.html', context)
 
 def userProfile(request, username):
     user = User.objects.get(username=username)
@@ -107,7 +110,7 @@ def post(request, pk):
     context = {'post': post, 'tags': tags, 'posts': posts}
     return render(request, 'ogambo/post.html', context)
 
-@login_required(login_url='login')
+@login_required(login_url='user-auth')
 def createPost(request):
     if request.method == 'POST':
         print("Received POST request")
@@ -145,7 +148,7 @@ def createPost(request):
     context = {'form': form}
     return render(request, 'ogambo/forms/post_form.html', context)
 
-@login_required(login_url='login')
+@login_required(login_url='user-auth')
 def updatePost(request, pk):
     post = get_object_or_404(Post, id=pk)
     
@@ -169,7 +172,7 @@ def updatePost(request, pk):
     }
     return render(request, 'ogambo/forms/post_form.html', context)
 
-@login_required(login_url='login')
+@login_required(login_url='user-auth')
 def deletePost(request, pk):
     post = Post.objects.get(id=pk)
     if request.method == 'POST':

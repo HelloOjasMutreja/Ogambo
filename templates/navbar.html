@@ -162,7 +162,7 @@
                 <li><a class="dropdown-item" href="{% url 'user-profile' request.user.username %}"><i class="bi bi-person-fill"></i></a></li>
                 <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-door-open-fill"></i></a></li>
                 {% else %}
-                <li><a class="dropdown-item" href="{% url 'login' %}"><i class="bi bi-door-closed-fill"></i></a></li>
+                <li><a class="dropdown-item" href="{% url 'user-auth' %}"><i class="bi bi-door-closed-fill"></i></a></li>
                 {% endif %}
             </ul>
         </div>

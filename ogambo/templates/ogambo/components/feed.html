@@ -310,7 +310,7 @@
                     {% if post.user %}
                         <a href="{% url 'user-profile' post.user.username %}" class="user-info">
                             <div class="user-avatar"></div>
-                            {{post.user}} | {{post.updated|timesince}} ago
+                            {{post.user}} | {{post.updated|timesince}}
                         </a>
                     {% endif %}
                     {% if post.image or post.video %}

@@ -1,0 +1,184 @@
+{% extends 'blank_theme.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<style>
+    .main-body {
+        display: flex;
+        width: -webkit-fill-available;
+        min-height: 85vh;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        width: -webkit-fill-available;
+        max-width: 450px;
+        justify-content: center;
+        align-self: center;
+        color: #FFFBED;
+    }
+
+    h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-top: 96px;
+        margin-bottom: 0px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 36px;
+    }
+
+    .input-field {
+        background: transparent;
+        border: 3px solid #FFFBED;
+        border-radius: 12px;
+        padding: 12px;
+        color: #FFFBED;
+        width: 100%;
+        font-weight: 700;
+    }
+
+    .input-field::placeholder {
+        color: #8a8a8a;
+    }
+
+    .input-field:focus {
+        border-color: #FFF;
+    }
+
+    .submit-button {
+        background-color: var(--ogambo-orange);
+        color: #121212;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        margin-top: 16px;
+        font-weight: 700;
+        width: 100%;
+    }
+
+    .terms {
+        color: #FFFBED;
+        text-align: center;
+        font-weight: 700;
+        margin-top: 18px;
+        margin-bottom: 0;
+    }
+
+    .terms a {
+        color: var(--ogambo-cyan);
+        text-decoration: none;
+    }
+
+    .page-switch {
+        margin-top: 30px;
+    }
+
+    .page-switch-heading {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .page-switch-text {
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .page-switch-button {
+        display: inline-block;
+        padding: 1rem 2rem;
+        border: 3px solid #FFFBED;
+        border-radius: 12px;
+        color: var(--ogambo-orange);
+        text-decoration: none;
+        font-weight: 700;
+        width: 100%;
+        text-align: center;
+    }
+
+    @media (max-width: 1200px) {
+        .main-body {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        picture {
+            align-self: flex-start;
+        }
+    }
+</style>
+
+<div class="main-body">
+    <a href="{% url 'user-auth' %}">
+        <picture>
+            <source media="()" srcset="{% static 'assets/ogambo-brand.png' %}" height="108">
+            <source media="(max-width: 1200px)" srcset="{% static 'assets/ogambo-brand.png' %}" height="56">
+            <img src="{% static 'assets/ogambo-brand.png' %}" alt="Ogambo" class="d-inline-block align-text-top">
+        </picture>
+    </a>
+    
+    {% if page == 'login' %}
+    
+    <main class="main-content">
+        <h1>Sign in to Ogambo</h1>
+    
+        <form class="form-group" method="POST">
+            {% csrf_token %}
+    
+            <input type="text" class="input-field" name="username" id="" placeholder="Enter Username" />
+            <input type="text" class="input-field" name="password" id="" placeholder="Enter Password" />
+            
+            <input type="submit" class="submit-button" value="Sign in" />
+        </form>
+        
+        <div class="page-switch">
+            <p class="page-switch-heading">Don't have an account?</p>
+            <a href="{% url 'register' %}" class="page-switch-button">Sign up</a>
+        </div>
+    </main>
+    
+    {% else %}
+    
+    <main class="main-content">
+        <h1>Sign up to Ogambo</h1>
+    
+        <form class="form-group" method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="">
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="form-error">
+                            {{ field.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <input type="submit" class="submit-button" value="Sign up">
+        </form>
+    
+        <p class="terms">
+            By signing up, you agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>, including Cookie Use.
+        </p>
+    
+        <div class="page-switch">
+            <p class="page-switch-heading">Already have an account?</p>
+            <a href="{% url 'login' %}" class="page-switch-button">Sign in</a>
+        </div>
+    </main>
+    
+    {% endif %}
+</div>
+
+{% endblock content %}
