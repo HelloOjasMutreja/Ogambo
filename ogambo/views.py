@@ -5,10 +5,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .models import Post, Vote, Tag, Profile
 from .forms import PostForm, CustomUserCreationForm
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, Count
+import os
 
 # Create your views here.
 
@@ -111,6 +112,29 @@ def post(request, pk):
 
     context = {'post': post, 'tags': tags, 'posts': posts}
     return render(request, 'ogambo/post.html', context)
+
+def generateMediaDownload(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if not post.image and not post.video:
+        return HttpResponse("No media available for this post.", status=404)
+
+    try:
+        if post.video and os.path.exists(post.video.path):  # Ensure video file exists
+            video_path = post.video.path
+            video_filename = f"video_{post_id}.{post.video.path.split('.')[-1]}"
+            return FileResponse(open(video_path, 'rb'), as_attachment=True, filename=video_filename)
+
+        elif post.image and os.path.exists(post.image.path):  # Ensure image file exists
+            image_path = post.image.path
+            image_filename = f"image_{post_id}.png"
+            return FileResponse(open(image_path, 'rb'), as_attachment=True, filename=image_filename)
+
+        else:
+            return HttpResponse("Media file does not exist on the server.", status=404)
+
+    except Exception as e:
+        return HttpResponse(f"Error downloading media: {str(e)}", status=500)
 
 @login_required(login_url='user-auth')
 def createPost(request):
