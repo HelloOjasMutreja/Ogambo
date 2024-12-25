@@ -84,18 +84,6 @@
     <ul class="nav flex-column">
         <li class="nav-item">
             <a class="nav-link" href="#">
-                <i class="bi bi-clock"></i>
-                <span>Latest</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-caret-up"></i>
-                <span>Trending</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
                 <i class="bi bi-trophy"></i>
                 <span>Top</span>
             </a>
@@ -107,8 +95,14 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% if request.GET.bookmarked == 'true' %}?{% else %}?bookmarked=true{% endif %}">
                 <i class="bi bi-bookmark"></i>
+                <span>Bookmarks</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="bi bi-star"></i>
                 <span>Subscriptions</span>
             </a>
         </li>

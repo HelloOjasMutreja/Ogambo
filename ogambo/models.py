@@ -65,3 +65,14 @@ class Vote(models.Model):
     def __str__(self):
         voter = self.user.username if self.user else self.ip_address
         return f"{voter} voted {'up' if self.vote_type else 'down'} on {self.post.title}"
+
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookmarks")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="bookmarks")
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} bookmarked {self.post.title}"
+
+    class Meta:
+        unique_together = ('user', 'post')

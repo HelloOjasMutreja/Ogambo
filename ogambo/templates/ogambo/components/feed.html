@@ -104,7 +104,7 @@
     }
 
     .post-description {
-        background-color: #FFFBED;
+        background-color: #8a8a8a;
         border-radius: 12px;
         color: #121212;
         padding: 36px 18px 18px 18px;
@@ -146,7 +146,7 @@
         width: 57px;
         height: 57px;
         background-color: #000;
-        border: 2px solid #1E1E1E;
+        border: 4px solid #1E1E1E;
         border-radius: 12px;
         color: #FFFBED;
         font-size: 30px;
@@ -156,8 +156,9 @@
         -webkit-text-stroke: 1px;
     }
 
-    .bi-share {
-        margin-left: -5px
+    .bi-arrow-return-left {
+        transform: rotate(180deg);
+        display: inline-block;
     }
 
     .action-btn.active[data-vote-type="upvote"] {
@@ -170,8 +171,9 @@
         border-color: #FF4141;
     }
 
-    .action-btn.downvote {
-        display: none;
+    .action-btn.active[data-vote-type="bookmark"] {
+        color: #FFFBED;
+        border-color: #FFFBED;
     }
 
     .hashtags {
@@ -264,6 +266,7 @@
     .popup-buttons {
         display: flex;
         justify-content: end;
+        gap: 9px;
     }
 
     .popup-content button,
@@ -283,7 +286,7 @@
         width: 57px;
         height: 57px;
         background-color: #000;
-        border: 2px solid #1E1E1E;
+        border: 4px solid #1E1E1E;
         border-radius: 12px;
         color: #FFFBED;
         font-size: 30px;
@@ -363,6 +366,7 @@
             font-size: 16px;
             width: 32px;
             height: 32px;
+            border: 2px solid #1E1E1E;
         }
 
         .popup-buttons button i {
@@ -430,10 +434,12 @@
                                 <i class="bi bi-three-dots"></i>
                             </button>
                             <button class="action-btn" onclick="openSharePopup('{{ post.id }}')">
-                                <i class="bi bi-send"></i>
+                                <i class="bi bi-arrow-return-left"></i>
                             </button>
-                            <button class="action-btn">
-                                <i class="bi bi-bookmark"></i>
+                            <button class="action-btn bookmark {% if post.is_bookmarked %}active{% endif %}" 
+                                    data-post-id="{{ post.id }}" 
+                                    data-vote-type="bookmark">
+                                <i class="bi bi-bookmark{% if post.is_bookmarked %}-fill{% endif %}"></i>
                             </button>
                         </div>                        
                     </div>
@@ -513,7 +519,7 @@
             console.error(`Description element with ID description-${postId} not found.`);
         }
     }
-
+    
     document.addEventListener('DOMContentLoaded', () => {
         const voteButtons = document.querySelectorAll('.action-btn[data-vote-type]');
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -550,6 +556,40 @@
                     }
                 })
                 .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const bookmarkButtons = document.querySelectorAll('.action-btn.bookmark');
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        bookmarkButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.stopPropagation();
+
+                const postId = button.getAttribute('data-post-id');
+
+                fetch(`/bookmark/${postId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.bookmarked) {
+                            button.classList.add('active');
+                            button.querySelector('i').classList.remove('bi-bookmark');
+                            button.querySelector('i').classList.add('bi-bookmark-fill');
+                        } else {
+                            button.classList.remove('active');
+                            button.querySelector('i').classList.remove('bi-bookmark-fill');
+                            button.querySelector('i').classList.add('bi-bookmark');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             });
         });
     });

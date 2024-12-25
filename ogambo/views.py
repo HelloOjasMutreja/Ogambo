@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .models import Post, Vote, Tag, Profile
+from .models import Post, Vote, Tag, Profile, Bookmark
 from .forms import PostForm, CustomUserCreationForm
 from django.http import JsonResponse, HttpResponse, FileResponse
 from django.views.decorators.http import require_POST
@@ -98,18 +98,50 @@ def vote(request, pk, vote_type):
     
     return JsonResponse({'upvotes': post.upvotes(), 'downvotes': post.downvotes()})
 
+@csrf_exempt
+def bookmark(request, post_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+
+    try:
+        post = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({'error': 'Post not found'}, status=404)
+
+    bookmark, created = Bookmark.objects.get_or_create(user=request.user, post=post)
+
+    if not created:  # If the bookmark already exists, remove it
+        bookmark.delete()
+        return JsonResponse({'bookmarked': False})
+    else:  # Otherwise, create the bookmark
+        return JsonResponse({'bookmarked': True})
+
 def home(request):
-    posts = Post.objects.all()
+    q = request.GET.get('q', '')  # Get the search query or default to an empty string
+    bookmarked_only = request.GET.get('bookmarked', 'false').lower() == 'true'
+
+    posts = Post.objects.filter(
+        Q(tags__name__icontains=q) |
+        Q(title__icontains=q) |
+        Q(user__username__icontains=q)
+    ).distinct()
+
+    if bookmarked_only and request.user.is_authenticated:
+        posts = posts.filter(bookmarks__user=request.user)
+
     user_votes = {}
     if request.user.is_authenticated:
         votes = Vote.objects.filter(user=request.user)
         user_votes = {vote.post_id: vote.vote_type for vote in votes}
 
-    for post in posts:
-        post.is_upvoted = user_votes.get(post.id) is True
-        post.is_downvoted = user_votes.get(post.id) is False
+        for post in posts:
+            post.is_upvoted = user_votes.get(post.id) is True
+            post.is_downvoted = user_votes.get(post.id) is False
+            post.is_bookmarked = post.bookmarks.filter(user=request.user).exists()
 
-    context = {'posts': posts}
+    tags = Tag.objects.annotate(num_posts=Count('posts')).order_by('-num_posts')[:50]
+
+    context = {'posts': posts, 'tags': tags}
     return render(request, 'ogambo/home.html', context)
 
 def post(request, pk):

@@ -37,8 +37,6 @@
     .gradient-image {
         width: 44px;
         height: 44px;
-        background-image: url('path/to/your/gradient-image.png');
-        background-image: linear-gradient(45deg, #11D7FF, #FF4AC6);
         background-size: cover;
         border-radius: 50%;
     }
@@ -148,7 +146,7 @@
         <div class="dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <div class="profile-dropdown">
                 <div class="gradient-image-cover">
-                    <div class="gradient-image"></div>
+                <img src="{{request.user.profile.avatar.url}}" class="gradient-image" alt="">
                 </div>
                 <span class="dropdown-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16" stroke="white" stroke-width="1">

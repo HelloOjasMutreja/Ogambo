@@ -10,6 +10,7 @@ urlpatterns = [
 
     path('', views.home, name="home"),
     path('vote/<uuid:pk>/<str:vote_type>/', views.vote, name="vote"),
+    path('bookmark/<uuid:post_id>/', views.bookmark, name='bookmark'),
     path('post/<uuid:post_id>/download/', views.generateMediaDownload, name='generate_download'),
 
     path('post/<uuid:pk>/', views.post, name="post"),
