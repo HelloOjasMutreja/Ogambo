@@ -1,8 +1,30 @@
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    bio = models.TextField(max_length=85, blank=True, null=True)
+    avatar = models.ImageField(upload_to='profile_media/avatars/', default='default_avatar.png', blank=True, null=True)
+    banner = models.ImageField(upload_to='profile_media/banners/', default='default_banner.png', blank=True, null=True)
+    dob = models.DateField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+    
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
 
 class Tag(models.Model):
     name = models.CharField(max_length=100, unique=True)

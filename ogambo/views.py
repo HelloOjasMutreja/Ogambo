@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .models import Post, Vote, Tag
+from .models import Post, Vote, Tag, Profile
 from .forms import PostForm, CustomUserCreationForm
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -58,11 +58,13 @@ def registerUser(request):
 
 def userProfile(request, username):
     user = User.objects.get(username=username)
+    profile = user.profile
     posts = user.post_set.all()
     tags = Tag.objects.annotate(num_posts=Count('posts')).order_by('-num_posts')[:50]
     context = {
         'tags': tags,
-        'user_profile': user, 
+        'user_profile': user,
+        'profile': profile,
         'posts': posts, 
         'username': user.username
         }
