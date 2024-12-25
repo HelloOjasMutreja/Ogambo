@@ -61,6 +61,14 @@ def userProfile(request, username):
     user = User.objects.get(username=username)
     profile = user.profile
     posts = user.post_set.all()
+    user_votes = {}
+    if request.user.is_authenticated:
+        votes = Vote.objects.filter(user=request.user)
+        user_votes = {vote.post_id: vote.vote_type for vote in votes}
+
+    for post in posts:
+        post.is_upvoted = user_votes.get(post.id) is True
+        post.is_downvoted = user_votes.get(post.id) is False
     tags = Tag.objects.annotate(num_posts=Count('posts')).order_by('-num_posts')[:50]
     context = {
         'tags': tags,
@@ -91,15 +99,17 @@ def vote(request, pk, vote_type):
     return JsonResponse({'upvotes': post.upvotes(), 'downvotes': post.downvotes()})
 
 def home(request):
-    q = request.GET.get('q') if request.GET.get('q') != None else ''
-    posts = Post.objects.filter(
-        Q(tags__name__icontains=q) |
-        Q(title__icontains=q) |
-        Q(user__username__icontains=q)
-        ).distinct
-    tags = Tag.objects.annotate(num_posts=Count('posts')).order_by('-num_posts')[:50]
+    posts = Post.objects.all()
+    user_votes = {}
+    if request.user.is_authenticated:
+        votes = Vote.objects.filter(user=request.user)
+        user_votes = {vote.post_id: vote.vote_type for vote in votes}
 
-    context = {'posts' : posts, 'tags' : tags}
+    for post in posts:
+        post.is_upvoted = user_votes.get(post.id) is True
+        post.is_downvoted = user_votes.get(post.id) is False
+
+    context = {'posts': posts}
     return render(request, 'ogambo/home.html', context)
 
 def post(request, pk):

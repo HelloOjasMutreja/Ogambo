@@ -420,21 +420,22 @@
                 <div class="meme-footer">
                     <div class="footer-buttons">
                         <div class="action-buttons">
-                            <button class="action-btn downvote"  data-vote-type="downvote" data-post-id="{{post.id}}">
+                            <button class="action-btn downvote {% if post.is_downvoted %}active{% endif %}" data-vote-type="downvote" data-post-id="{{ post.id }}">
                                 <i class="bi bi-arrow-down"></i>
                             </button>
-                            <button class="action-btn upvote" data-vote-type="upvote" data-post-id="{{post.id}}">
+                            <button class="action-btn upvote {% if post.is_upvoted %}active{% endif %}" data-vote-type="upvote" data-post-id="{{ post.id }}">
                                 <i class="bi bi-arrow-up"></i>
                             </button>
-                            <button class="action-btn toggle-btn" id="toggle-{{post.id}}" onclick="toggleDescription('{{post.id}}')">
+                            <button class="action-btn toggle-btn" id="toggle-{{ post.id }}" onclick="toggleDescription('{{ post.id }}')">
                                 <i class="bi bi-three-dots"></i>
                             </button>
                             <button class="action-btn" onclick="openSharePopup('{{ post.id }}')">
                                 <i class="bi bi-send"></i>
+                            </button>
                             <button class="action-btn">
                                 <i class="bi bi-bookmark"></i>
                             </button>
-                        </div>
+                        </div>                        
                     </div>
                     <!-- <hr>
                     <div class="">
@@ -514,12 +515,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const voteButtons = document.querySelectorAll('.vote-btn, .action-btn');
+        const voteButtons = document.querySelectorAll('.action-btn[data-vote-type]');
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
         voteButtons.forEach(button => {
             button.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent the click from affecting parent elements
+                event.stopPropagation(); // Prevent click from affecting parent elements
 
                 const postId = button.getAttribute('data-post-id');
                 const voteType = button.getAttribute('data-vote-type');
@@ -528,27 +529,25 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    }
+                        'X-CSRFToken': csrftoken,
+                    },
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // Change button colors based on vote type
-                    const upvoteButton = document.querySelector(`button[data-post-id="${postId}"][data-vote-type="upvote"]`);
-                    const downvoteButton = document.querySelector(`button[data-post-id="${postId}"][data-vote-type="downvote"]`);
+                    // Update the UI to reflect new vote counts
+                    const upvoteButton = document.querySelector(`.action-btn[data-post-id="${postId}"][data-vote-type="upvote"]`);
+                    const downvoteButton = document.querySelector(`.action-btn[data-post-id="${postId}"][data-vote-type="downvote"]`);
 
-                    // Reset button colors first
-                    upvoteButton.style.color = "";
-                    downvoteButton.style.color = "";
+                    // Reset button states
+                    upvoteButton.classList.remove('active');
+                    downvoteButton.classList.remove('active');
 
-                    if (voteType === "upvote") {
+                    // Activate button based on vote type, if it remains active
+                    if (voteType === 'upvote' && button !== upvoteButton.classList.contains('active')) {
                         upvoteButton.classList.add('active');
-                        downvoteButton.classList.remove('active');
-                    } else if (voteType === "downvote") {
+                    } else if (voteType === 'downvote' && button !== downvoteButton.classList.contains('active')) {
                         downvoteButton.classList.add('active');
-                        upvoteButton.classList.remove('active');
                     }
-
                 })
                 .catch(error => console.error('Error:', error));
             });
