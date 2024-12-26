@@ -34,11 +34,15 @@
         cursor: pointer;
         position: relative;
     }
-    .gradient-image {
+    .gradient-image,
+    .logged-user-image {
         width: 44px;
         height: 44px;
         background-size: cover;
         border-radius: 50%;
+    }
+    .gradient-image {
+        background-color: #FF5F2E;
     }
     .gradient-image-cover {
         width: 56px;
@@ -111,7 +115,8 @@
             height: 31px;
             margin-left: -2.5px;
         }
-        .gradient-image {
+        .gradient-image,
+        .logged-user-image {
             width: 26px;
             height: 26px;
         }
@@ -146,7 +151,11 @@
         <div class="dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <div class="profile-dropdown">
                 <div class="gradient-image-cover">
-                <img src="{{request.user.profile.avatar.url}}" class="gradient-image" alt="">
+                    {% if request.user and request.user.profile.avatar %}
+                        <img src="{{request.user.profile.avatar.url}}" class="logged-user-image" alt="">
+                    {% else %}
+                        <div class="gradient-image"></div>
+                    {% endif %}
                 </div>
                 <span class="dropdown-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16" stroke="white" stroke-width="1">
