@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import dj_database_url
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +26,9 @@ SECRET_KEY = 'django-insecure-9(%i93mk9rm6bhgoq%8239%^%7#sb0z2cg4a+8(c=pd!p!9f+4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '192.168.1.8'
+]
 
 
 # Application definition
@@ -79,13 +80,11 @@ WSGI_APPLICATION = 'memesite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set")
-
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600, ssl_require=True)
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
