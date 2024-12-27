@@ -247,3 +247,21 @@ def deletePost(request, pk):
         post.delete()
         return redirect('home')
     return render(request, 'ogambo/delete.html', {'obj' : post})
+
+def explore(request):
+    tags = Tag.objects.annotate(num_posts=Count('posts')).order_by('-num_posts')[:50]
+
+    context = {'tags': tags}
+    return render(request, 'ogambo/discover.html', context)
+
+@login_required(login_url='user-auth')
+def bookmarksFeed(request):
+    bookmarked_only = request.GET.get('bookmarked', 'false').lower() == 'true'
+
+    posts = Post.objects.all()
+
+    if bookmarked_only and request.user.is_authenticated:
+        posts = Post.objects.filter(bookmarks__user=request.user)
+
+    context = {'posts': posts}
+    return render(request, 'ogambo/bookmarks.html', context)
