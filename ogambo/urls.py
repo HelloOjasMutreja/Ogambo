@@ -9,8 +9,11 @@ urlpatterns = [
     path('profile/<str:username>/', views.userProfile, name="user-profile"),
 
     path('', views.home, name="home"),
+    path('explore/', views.explore, name="explore"),
+    path('bookmarks/', views.bookmarksFeed, name="bookmarks-feed"),
     path('vote/<uuid:pk>/<str:vote_type>/', views.vote, name="vote"),
     path('bookmark/<uuid:post_id>/', views.bookmark, name='bookmark'),
+
     path('post/<uuid:post_id>/download/', views.generateMediaDownload, name='generate_download'),
 
     path('post/<uuid:pk>/', views.post, name="post"),
